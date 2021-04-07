@@ -36,7 +36,7 @@ class Everpspopup extends Module
     {
         $this->name = 'everpspopup';
         $this->tab = 'administration';
-        $this->version = '3.4.1';
+        $this->version = '3.4.2';
         $this->author = 'Team Ever';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -150,6 +150,9 @@ class Everpspopup extends Module
         ));
 
         $this->html .= $this->context->smarty->fetch($this->local_path.'views/templates/admin/header.tpl');
+        if ($this->checkLatestEverModuleVersion($this->name, $this->version)) {
+            $this->html .= $this->context->smarty->fetch($this->local_path.'views/templates/admin/upgrade.tpl');
+        }
         $this->html .= $this->renderForm();
         $this->html .= $this->context->smarty->fetch($this->local_path.'views/templates/admin/footer.tpl');
 
@@ -501,5 +504,29 @@ class Everpspopup extends Module
             $message = str_replace($key, $value, $message);
         }
         return $message;
+    }
+
+    public function checkLatestEverModuleVersion($module, $version)
+    {
+        $upgrade_link = 'https://upgrade.team-ever.com/upgrade.php?module='
+        .$module
+        .'&version='
+        .$version;
+        $handle = curl_init($upgrade_link);
+        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($handle);
+        $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+        if ($httpCode != 200) {
+            curl_close($handle);
+            return false;
+        }
+        curl_close($handle);
+        $module_version = Tools::file_get_contents(
+            $upgrade_link
+        );
+        if ($module_version && $module_version > $version) {
+            return true;
+        }
+        return false;
     }
 }

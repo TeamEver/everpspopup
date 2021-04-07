@@ -32,6 +32,7 @@ class AdminEverPsPopupController extends ModuleAdminController
         $this->bootstrap = true;
         $this->lang = true;
         $this->table = 'everpspopup';
+        $this->module_name = 'everpspopup';
         $this->className = 'EverPsPopupClass';
         $this->context = Context::getContext();
         $this->identifier = "id_everpspopup";
@@ -127,6 +128,15 @@ class AdminEverPsPopupController extends ModuleAdminController
         $lists = parent::renderList();
 
         $this->html .= $this->context->smarty->fetch(self::POPUP_VIEWS.'templates/admin/header.tpl');
+        $module_instance = Module::getInstanceByName($this->module_name);
+        if ($module_instance->checkLatestEverModuleVersion($this->module_name, $module_instance->version)) {
+            $this->html .= $this->context->smarty->fetch(
+                _PS_MODULE_DIR_
+                .'/'
+                .$this->module_name
+                .'/views/templates/admin/upgrade.tpl'
+            );
+        }
         if (count($this->errors)) {
             $this->context->smarty->assign(array(
                 'errors' => $this->errors
