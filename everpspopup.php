@@ -36,7 +36,7 @@ class Everpspopup extends Module
     {
         $this->name = 'everpspopup';
         $this->tab = 'administration';
-        $this->version = '3.4.2';
+        $this->version = '3.4.3';
         $this->author = 'Team Ever';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -402,6 +402,13 @@ class Everpspopup extends Module
             $this->smarty->assign(
                 array(
                     'ever_errors' => 'only index',
+                )
+            );
+            return $this->display(__FILE__, 'errors.tpl', $this->getCacheId());
+        } elseif ($everpopup->controller_array == 5 && $controller_name != 'cart') {
+            $this->smarty->assign(
+                array(
+                    'ever_errors' => 'only cart',
                 )
             );
             return $this->display(__FILE__, 'errors.tpl', $this->getCacheId());

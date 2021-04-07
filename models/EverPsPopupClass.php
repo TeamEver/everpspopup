@@ -135,7 +135,7 @@ class EverPsPopupClass extends ObjectModel
 
     public function getPopup($id_shop, $id_lang)
     {
-        if (!(int)$id_shop) {
+        if (!$id_shop) {
             $id_shop = (int)$this->context->shop->id;
         }
         $sql = new DbQuery;

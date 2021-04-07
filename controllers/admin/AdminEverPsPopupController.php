@@ -204,6 +204,10 @@ class AdminEverPsPopupController extends ModuleAdminController
             ),
             array(
                 'id_option' => 5,
+                'name' => $this->l('Cart page only')
+            ),
+            array(
+                'id_option' => 6,
                 'name' => $this->l('All')
             ),
         );
