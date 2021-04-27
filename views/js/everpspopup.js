@@ -19,6 +19,7 @@
     var cookie_time = $('#everpspopup_block_center').data('expire');
     var adult_mode = $('#everpspopup_block_center').data('adult');
     var delay = parseInt($('#everpspopup_block_center').data('delay'));
+    var cookie_suffix = $('#everpspopup_block_center').data('cookiesuffix');
 
     (function (factory) {
         if (typeof define === 'function' && define.amd) {
@@ -139,7 +140,7 @@
 
     if ($('#ever_fancy_mark').length) {
         setTimeout(function() {
-            if ($.cookie('everpspopup') != popcontent) {
+            if ($.cookie('everpspopup' + cookie_suffix) != popcontent) {
                 if (adult_mode) {
                     $('#ever_fancy_mark').fancybox({
                         'type'  :   'inline',
@@ -171,11 +172,11 @@
                         'overlayShow'   :   false,
                         'opacity' : 1,
                         'beforeClose': function() {
-                            $.cookie('everpspopup', popcontent, { expires: cookie_time});
+                            $.cookie('everpspopup' + cookie_suffix, popcontent, { expires: cookie_time});
                         },
                     }).trigger('click');
                     $(window).bind('beforeunload', function(){
-                      $.cookie('everpspopup', popcontent, { expires: cookie_time});
+                      $.cookie('everpspopup' + cookie_suffix, popcontent, { expires: cookie_time});
                     });
                 }
             }
@@ -196,7 +197,7 @@
                     success: function(data) {
                         if (data.return) {
                             console.log(data.message);
-                            $.cookie('everpspopup', popcontent, { expires: cookie_time});
+                            $.cookie('everpspopup' + cookie_suffix, popcontent, { expires: cookie_time});
                             $('#everpspopup_confirm').slideDown();
                             $('#everpspopup_confirm').html(data.message);
                             setTimeout(function() { location.reload() }, 2000);

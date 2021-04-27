@@ -7,7 +7,7 @@
 *}
 
 <a href="#everpspopup_block_center" rel="nofollow" data-fancybox id="ever_fancy_mark"></a>
-<div id="everpspopup_block_center" data-delay="{$everpspopup->delay|escape:'htmlall':'UTF-8'}" data-adult="{$everpspopup->adult_mode|escape:'htmlall':'UTF-8'}" data-expire="{$everpspopup->cookie_time|escape:'htmlall':'UTF-8'}" class="Everpopup_block" style="display:none;">
+<div id="everpspopup_block_center" data-delay="{$everpspopup->delay|escape:'htmlall':'UTF-8'}" data-adult="{$everpspopup->adult_mode|escape:'htmlall':'UTF-8'}" data-expire="{$everpspopup->cookie_time|escape:'htmlall':'UTF-8'}" data-cookiesuffix="{$everpspopup->cookie_suffix|escape:'htmlall':'UTF-8'}" class="Everpopup_block" style="display:none;">
     {if $everpspopup->link}<a href="{$everpspopup->link|escape:'htmlall':'UTF-8'}" rel="nofollow">{/if}
         <div class="container"{if $everpspopup->bgcolor} style="background-color:{$everpspopup->bgcolor|escape:'htmlall':'UTF-8'};"{/if}>
             <div class="row">
@@ -76,7 +76,7 @@
                     <div class="well text-center center-block">
                         <form id="adult_mode_form" method="post">
                             <div class="input-group col-md-12">
-                                <input class="input-lg" id="ever_birthday" name="ever_birthday" type="hidden" value="{$ever_required_age}" />
+                                <input class="input-lg" id="ever_birthday" name="ever_birthday" type="hidden" value="{$ever_required_age|escape:'htmlall':'UTF-8'}" />
                                   <input type="hidden" id="everpspopup_new_adult_url" value="{$link->getModuleLink('everpspopup', 'ajaxAdultMode')|escape:'htmlall':'UTF-8'}" />
                                    <button class="btn btn-info btn-lg" type="submit">{l s='I certify that I am of age' mod='everpspopup'}</button>
                               </div>

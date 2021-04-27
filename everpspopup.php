@@ -36,7 +36,7 @@ class Everpspopup extends Module
     {
         $this->name = 'everpspopup';
         $this->tab = 'administration';
-        $this->version = '3.4.3';
+        $this->version = '3.6.1';
         $this->author = 'Team Ever';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -45,7 +45,8 @@ class Everpspopup extends Module
         $this->description = $this->l('No doubt the most famous pop up module');
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
         $this->isSeven = Tools::version_compare(_PS_VERSION_, '1.7', '>=') ? true : false;
-        $this->module_key = '8d700b79019fbaa898182703610023f9';
+        $this->siteUrl = Tools::getHttpHost(true).__PS_BASE_URI__;
+        $this->cookie_suffix = Tools::substr(Tools::encrypt('everpspopup/cookie'), 0, 10);
     }
 
     /**
@@ -307,9 +308,7 @@ class Everpspopup extends Module
 
     public function hookHeader()
     {
-        $mondialRelay = Module::isInstalled('mondialrelay');
         $controller_name = Tools::getValue('controller');
-        // var_dump($this->context->controller);
         if ((int)Configuration::get('EVERPSPOPUP_FANCYBOX')) {
             if ($controller_name != 'order') {
                 $this->context->controller->addCSS(($this->_path).'views/css/jquery.fancybox.min.css', 'all');
@@ -336,79 +335,19 @@ class Everpspopup extends Module
     public function hookDisplayBeforeBodyClosingTag()
     {
         $controller_name = Tools::getValue('controller');
-        $everpopup = new EverPsPopupClass();
-        $everpopup = $everpopup->getPopup(
+        $everpopup = EverPsPopupClass::getPopupByIdController(
             (int)$this->context->shop->id,
-            (int)$this->context->language->id
+            (int)$this->context->language->id,
+            $controller_name
         );
-        // var_dump($everpopup);
-        if (!$everpopup || !$everpopup->active) {
+        if (!Validate::isLoadedObject($everpopup)) {
             return;
-        }
-        // Date start & date end
-        $now = date('Y-m-d');
-        if ($everpopup->date_start !='0000-00-00') {
-            if ($everpopup->date_start > $now) {
-                $this->smarty->assign(
-                    array(
-                        'ever_errors' => 'date_start superior to now',
-                    )
-                );
-                return $this->display(__FILE__, 'errors.tpl', $this->getCacheId());
-            }
-        }
-        if ($everpopup->date_end !='0000-00-00') {
-            if ($everpopup->date_end < $now) {
-                $this->smarty->assign(
-                    array(
-                        'ever_errors' => 'date_end inferior to now',
-                    )
-                );
-                return $this->display(__FILE__, 'errors.tpl', $this->getCacheId());
-            }
         }
         // Only unlogged users
         if ($everpopup->unlogged && (bool)$this->context->customer->isLogged()) {
             $this->smarty->assign(
                 array(
                     'ever_errors' => 'only for unlogged',
-                )
-            );
-            return $this->display(__FILE__, 'errors.tpl', $this->getCacheId());
-        }
-        // Controllers condition
-        if ($everpopup->controller_array == 1 && $controller_name != 'cms') {
-            $this->smarty->assign(
-                array(
-                    'ever_errors' => 'only CMS',
-                )
-            );
-            return $this->display(__FILE__, 'errors.tpl', $this->getCacheId());
-        } elseif ($everpopup->controller_array == 2 && $controller_name != 'product') {
-            $this->smarty->assign(
-                array(
-                    'ever_errors' => 'only products',
-                )
-            );
-            return $this->display(__FILE__, 'errors.tpl', $this->getCacheId());
-        } elseif ($everpopup->controller_array == 3 && $controller_name != 'category') {
-            $this->smarty->assign(
-                array(
-                    'ever_errors' => 'only categories',
-                )
-            );
-            return $this->display(__FILE__, 'errors.tpl', $this->getCacheId());
-        } elseif ($everpopup->controller_array == 4 && $controller_name != 'index') {
-            $this->smarty->assign(
-                array(
-                    'ever_errors' => 'only index',
-                )
-            );
-            return $this->display(__FILE__, 'errors.tpl', $this->getCacheId());
-        } elseif ($everpopup->controller_array == 5 && $controller_name != 'cart') {
-            $this->smarty->assign(
-                array(
-                    'ever_errors' => 'only cart',
                 )
             );
             return $this->display(__FILE__, 'errors.tpl', $this->getCacheId());
@@ -440,13 +379,17 @@ class Everpspopup extends Module
         }
         // Popup background
         if (file_exists(_PS_MODULE_DIR_.'everpspopup/views/img/everpopup_'.(int)$everpopup->id.'.jpg')) {
-            $background = _PS_BASE_URL_.__PS_BASE_URI__.'modules/everpspopup/views/img/everpopup_'.(int)$everpopup->id.'.jpg';
+            $background = _PS_BASE_URL_
+            .__PS_BASE_URI__
+            .'modules/everpspopup/views/img/everpopup_'
+            .(int)$everpopup->id
+            .'.jpg';
         } else {
             $background = false;
         }
         $date = strtotime('Y-m-d H:i:s -'.(int)Configuration::get('EVERPSPOPUP_AGE').' year');
         $date = date('Y-m-d H:i:s', $date);
-        // die(var_dump($date));
+        $everpopup->cookie_suffix = $this->cookie_suffix;
         $this->smarty->assign(
             array(
                 'everpspopup' => $everpopup,
@@ -523,11 +466,10 @@ class Everpspopup extends Module
         curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
         curl_exec($handle);
         $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+        curl_close($handle);
         if ($httpCode != 200) {
-            curl_close($handle);
             return false;
         }
-        curl_close($handle);
         $module_version = Tools::file_get_contents(
             $upgrade_link
         );

@@ -69,7 +69,11 @@ class AdminEverPsPopupController extends ModuleAdminController
     public function l($string, $class = null, $addslashes = false, $htmlentities = true)
     {
         if ($this->isSeven) {
-            return Context::getContext()->getTranslator()->trans($string, [],'Modules.Everpspopup.Admineverpspopupcontroller');
+            return Context::getContext()->getTranslator()->trans(
+                $string,
+                [],
+                'Modules.Everpspopup.Admineverpspopupcontroller'
+            );
         }
 
         return parent::l($string, $class, $addslashes, $htmlentities);

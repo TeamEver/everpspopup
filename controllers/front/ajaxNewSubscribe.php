@@ -47,14 +47,18 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
         }
 
         if ($ps_activeNewsletter) {
-            if (empty($_SERVER['REMOTE_ADDR']) || !filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP)) {
+            if (empty($_SERVER['REMOTE_ADDR'])
+                || !filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP)
+            ) {
                 die(Tools::jsonEncode(array(
                     'return' => false,
                     'error' => $module->l('User ip not found or not valid', 'ajaxNewSubscribe')
                 )));
             }
 
-            if (empty(Tools::getValue('ever_email')) || !Validate::isEmail(Tools::getValue('ever_email'))) {
+            if (empty(Tools::getValue('ever_email'))
+                || !Validate::isEmail(Tools::getValue('ever_email'))
+            ) {
                 die(Tools::jsonEncode(array(
                     'return' => false,
                     'error' => $module->l('Mail address is empty or is not valid.', 'ajaxNewSubscribe')
@@ -111,6 +115,9 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
             );
 
             if ($newSubscription) {
+                if ($this->isSeven) {
+                    // $this->sendVerificationEmail($email, $token);
+                }
                 die(Tools::jsonEncode(array(
                     'return' => true,
                     'message' => $module->l('Thank you ! Your e-mail has been successfuly registered.')

@@ -136,7 +136,7 @@ class EverPsPopupClass extends ObjectModel
     public function getPopup($id_shop, $id_lang)
     {
         if (!$id_shop) {
-            $id_shop = (int)$this->context->shop->id;
+            $id_shop = (int)Context::getContext()->shop->id;
         }
         $sql = new DbQuery;
         $sql->select('*');
@@ -154,5 +154,82 @@ class EverPsPopupClass extends ObjectModel
             (int)$id_lang,
             (int)$id_shop
         );
+    }
+
+    public static function getPopups($id_shop, $id_lang)
+    {
+        if (!$id_shop) {
+            $id_shop = (int)Context::getContext()->shop->id;
+        }
+        $sql = new DbQuery;
+        $sql->select('*');
+        $sql->from('everpspopup', 'ep');
+        $sql->leftJoin(
+            'everpspopup_lang',
+            'epl',
+            'ep.id_everpspopup = epl.id_everpspopup'
+        );
+        $sql->where('ep.active = 1');
+        $sql->where('epl.id_lang = '.(int)$id_lang);
+
+        return Db::getInstance()->executeS($sql);
+    }
+
+    public static function getPopupByIdController($id_shop, $id_lang, $controller)
+    {
+        switch ($controller) {
+            case 'cms':
+                $id_controller = 1;
+                break;
+
+            case 'product':
+                $id_controller = 2;
+                break;
+
+            case 'category':
+                $id_controller = 3;
+                break;
+
+            case 'index':
+                $id_controller = 4;
+                break;
+
+            case 'cart':
+                $id_controller = 5;
+                break;
+            
+            default:
+                $id_controller = null;
+                break;
+        }
+        $now = date('Y-m-d');
+        $popups = self::getPopups(
+            (int)$id_shop,
+            (int)$id_lang
+        );
+        if (!$id_controller) {
+            return false;
+        }
+        foreach ($popups as $popup_arr) {
+            $everpopup = new self(
+                (int)$popup_arr['id_everpspopup'],
+                (int)$id_lang,
+                (int)$id_shop
+            );
+            if ($everpopup->date_start !='0000-00-00') {
+                if ($everpopup->date_start > $now) {
+                    continue;
+                }
+                if ($everpopup->date_end < $now) {
+                    continue;
+                }
+            }
+
+            if ((int)$id_controller == (int)$everpopup->controller_array
+                || (int)$everpopup->controller_array == 6
+            ) {
+                return $everpopup;
+            }
+        }
     }
 }
