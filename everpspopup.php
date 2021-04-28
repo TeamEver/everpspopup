@@ -36,7 +36,7 @@ class Everpspopup extends Module
     {
         $this->name = 'everpspopup';
         $this->tab = 'administration';
-        $this->version = '3.6.1';
+        $this->version = '3.6.2';
         $this->author = 'Team Ever';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -146,8 +146,12 @@ class Everpspopup extends Module
                 $this->html .= $this->displayConfirmation($success);
             }
         }
+        $popup_admin_link  = 'index.php?controller=AdminEverPsPopup&token=';
+        $popup_admin_link .= Tools::getAdminTokenLite('AdminEverPsPopup');
+
         $this->context->smarty->assign(array(
             'everpspopup_dir' => $this->_path,
+            'popup_admin_link' => $popup_admin_link,
         ));
 
         $this->html .= $this->context->smarty->fetch($this->local_path.'views/templates/admin/header.tpl');

@@ -62,6 +62,11 @@ class AdminEverPsPopupController extends ModuleAdminController
         );
 
         $this->colorOnBackground = true;
+        $module_link  = 'index.php?controller=AdminModules&configure=everpspopup&token=';
+        $module_link .= Tools::getAdminTokenLite('AdminModules');
+        $this->context->smarty->assign(array(
+            'module_link' => $module_link
+        ));
 
         parent::__construct();
     }
