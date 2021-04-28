@@ -42,8 +42,10 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
         $ps_activeNewsletter = false;
         if ($this->isSeven) {
             $ps_activeNewsletter = Module::isEnabled('ps_emailsubscription');
+            $ps_newsletter_module = Module::getInstanceByName('ps_emailsubscription');
         } else {
             $ps_activeNewsletter = Module::isEnabled('blocknewsletter');
+            $ps_newsletter_module = Module::getInstanceByName('blocknewsletter');
         }
 
         if ($ps_activeNewsletter) {
@@ -52,22 +54,29 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
             ) {
                 die(Tools::jsonEncode(array(
                     'return' => false,
-                    'error' => $module->l('User ip not found or not valid', 'ajaxNewSubscribe')
+                    'error' => $module->l('User ip not found or not valid', 'everpspopup')
                 )));
             }
 
-            if (empty(Tools::getValue('ever_email'))
-                || !Validate::isEmail(Tools::getValue('ever_email'))
+            if (!Tools::getValue('everpspopupEmail')
+                || !Validate::isEmail(Tools::getValue('everpspopupEmail'))
             ) {
                 die(Tools::jsonEncode(array(
                     'return' => false,
-                    'error' => $module->l('Mail address is empty or is not valid.', 'ajaxNewSubscribe')
+                    'error' => $module->l('Mail address is empty or is not valid.', 'everpspopup')
+                )));
+            }
+
+            if (!Tools::getValue('everpspopupGdpr')) {
+                die(Tools::jsonEncode(array(
+                    'return' => false,
+                    'error' => $module->l('GDPR consent.', 'everpspopup')
                 )));
             }
 
             // Get needed vars
             $user_ip = $_SERVER['REMOTE_ADDR'];
-            $user_email = Tools::getValue('ever_email');
+            $user_email = Tools::getValue('everpspopupEmail');
 
             // Check if email address already exists
             if ($this->isSeven) {
@@ -115,8 +124,17 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
             );
 
             if ($newSubscription) {
-                if ($this->isSeven) {
-                    // $this->sendVerificationEmail($email, $token);
+                if ($this->isSeven && Configuration::get('NW_CONFIRMATION_EMAIL')) {
+                    // hook
+                    Hook::exec(
+                        'actionNewsletterRegistrationAfter',
+                        [
+                            'hookName' => 'everpspopup',
+                            'email' => $user_email,
+                            'action' => 'subscribe',
+                            'error' => false,
+                        ]
+                    );
                 }
                 die(Tools::jsonEncode(array(
                     'return' => true,
@@ -134,5 +152,38 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
                 'message' => $module->l('Module Newsletter not activated')
             )));
         }
+    }
+
+    /**
+     * Send a confirmation email.
+     *
+     * @param string $email
+     *
+     * @return bool
+     */
+    protected function sendConfirmationEmail($email)
+    {
+        $language = new Language($this->context->language->id);
+
+        return Mail::Send(
+            $this->context->language->id,
+            'newsletter_conf',
+            $this->trans(
+                'Newsletter confirmation',
+                array(),
+                'Emails.Subject',
+                $language->locale
+            ),
+            array(),
+            pSQL($email),
+            null,
+            null,
+            null,
+            null,
+            null,
+            _PS_MODULE_DIR_.'ps_emailsubscription/mails/',
+            false,
+            $this->context->shop->id
+        );
     }
 }

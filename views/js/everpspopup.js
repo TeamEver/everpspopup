@@ -231,7 +231,8 @@
             data: {
                 action: 'NewSubscribe',
                 ajax: true,
-                ever_email: $('#ever_email').val()
+                everpspopupEmail: $('#everpspopupEmail').val(),
+                everpspopupGdpr: $('#everpspopupGdpr').val()
             },
             success: function(data) {
                 if (data.return) {

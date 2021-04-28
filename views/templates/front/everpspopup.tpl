@@ -19,16 +19,25 @@
     <section>
         <div class="container">
             <div class="row">
-                <div class="col-md-6 col-md-offset-3">
+                <div class="col-md-12 col-md-offset-3">
                     <hgroup>
-                        <h2>
+                        <p class="h2 text-center">
                             {l s='Subscribe for newsletter' mod='everpspopup'}
-                        </h2>
+                        </p>
                     </hgroup>
-                    <div class="well text-center center-block">
+                    <div class="well center-block">
                         <form id="ever_subscription_form" method="post">
                             <div class="input-group col-md-12">
-                                <input class="input-lg" id="ever_email" type="email" placeholder="{l s='Your email' mod='everpspopup'}" required />
+                                <div class="form-group">
+                                    <label for="everpspopupEmail">{l s='Your email' mod='everpspopup'}</label>
+                                    <input id="everpspopupEmail" name="everpspopupEmail" class="form-control" aria-describedby="everpspopupEmailHelp" type="email" placeholder="{l s='Your email' mod='everpspopup'}" required />
+                                    <small id="everpspopupEmailHelp" class="form-text text-muted">{l s='We\'ll never share your email with anyone else.' mod='everpspopup'}</small>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="everpspopupGdpr" name="everpspopupGdpr" aria-describedby="everpspopupGdprHelp" value="1">
+                                    <label class="form-check-label" for="everpspopupGdpr">{l s='GDPR consent' mod='everpspopup'}</label>
+                                    <small id="everpspopupGdprHelp" class="form-text text-muted">{l s='You can unsubscribe anytime. You will find our contact information for this in the terms of use of the site.' mod='everpspopup'}</small>
+                                </div>
                                   <input type="hidden" id="everpspopup_new_subscribe_url" value="{$link->getModuleLink('everpspopup', 'ajaxNewSubscribe')|escape:'htmlall':'UTF-8'}" />
                                    <button class="btn btn-info btn-lg" type="submit">{l s='Submit' mod='everpspopup'}</button>
                               </div>
