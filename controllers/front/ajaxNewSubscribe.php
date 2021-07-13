@@ -52,7 +52,7 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
             if (empty($_SERVER['REMOTE_ADDR'])
                 || !filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP)
             ) {
-                die(Tools::jsonEncode(array(
+                die(json_encode(array(
                     'return' => false,
                     'error' => $module->l('User ip not found or not valid', 'everpspopup')
                 )));
@@ -61,14 +61,14 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
             if (!Tools::getValue('everpspopupEmail')
                 || !Validate::isEmail(Tools::getValue('everpspopupEmail'))
             ) {
-                die(Tools::jsonEncode(array(
+                die(json_encode(array(
                     'return' => false,
                     'error' => $module->l('Mail address is empty or is not valid.', 'everpspopup')
                 )));
             }
 
             if (!Tools::getValue('everpspopupGdpr')) {
-                die(Tools::jsonEncode(array(
+                die(json_encode(array(
                     'return' => false,
                     'error' => $module->l('GDPR consent.', 'everpspopup')
                 )));
@@ -76,14 +76,14 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
 
             // Get needed vars
             $user_ip = $_SERVER['REMOTE_ADDR'];
-            $user_email = Tools::getValue('everpspopupEmail');
+            $user_email = pSQL(Tools::getValue('everpspopupEmail'));
 
             // Check if email address already exists
             if ($this->isSeven) {
                 $table_newsletter_name = 'emailsubscription';
-                $id_group_shop =(int)Context::getContext()->shop->id_shop_group;
+                $id_group_shop = (int)Context::getContext()->shop->id_shop_group;
             } else {
-                $id_group_shop =(int)Context::getContext()->shop->id_group;
+                $id_group_shop = (int)Context::getContext()->shop->id_group;
                 $table_newsletter_name = 'newsletter';
             }
             $sql = new DbQuery();
@@ -98,22 +98,33 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
                 $sql = "UPDATE "._DB_PREFIX_."$table_newsletter_name SET active = 1 WHERE email = '{$user_email}'";
                 $activate = Db::getInstance()->execute($sql);
                 if (!$activate) {
-                    die(Tools::jsonEncode(array(
+                    die(json_encode(array(
                         'return' => false,
                         'error' => $module->l('Error : Can\'t update the newsletter subscription', 'ajaxNewSubscribe')
                     )));
                 }
 
-                die(Tools::jsonEncode(array(
+                die(json_encode(array(
                     'return' => true,
                     'message' => $module->l('You\'ve already registered to our mailing list', 'ajaxNewSubscribe')
                 )));
+            }
+            if ($this->isSeven) {
+                Hook::exec(
+                    'actionNewsletterRegistrationBefore',
+                    [
+                        'hookName' => 'everpspopup',
+                        'email' => $user_email,
+                        'action' => 'subscribe',
+                        'error' => false,
+                    ]
+                );
             }
 
             // Add new email address to newsletter table
             $newSubscription = Db::getInstance()->insert(
                 $table_newsletter_name,
-                array(
+                array(  
                     'id_shop' => (int)Context::getContext()->shop->id,
                     'id_shop_group' => (int)$id_group_shop ,
                     'email' => pSQL($user_email),
@@ -125,6 +136,10 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
 
             if ($newSubscription) {
                 if ($this->isSeven && Configuration::get('NW_CONFIRMATION_EMAIL')) {
+                    $this->sendConfirmationEmail($user_email);
+                    if ($code = Configuration::get('NW_VOUCHER_CODE')) {// send voucher
+                        $this->sendVoucher($user_email, $code);
+                    }
                     // hook
                     Hook::exec(
                         'actionNewsletterRegistrationAfter',
@@ -136,18 +151,18 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
                         ]
                     );
                 }
-                die(Tools::jsonEncode(array(
+                die(json_encode(array(
                     'return' => true,
                     'message' => $module->l('Thank you ! Your e-mail has been successfuly registered.')
                 )));
             }
 
-            die(Tools::jsonEncode(array(
+            die(json_encode(array(
                 'return' => false,
                 'error' => $module->l('Sorry, something went wrong. Please try again later.')
             )));
         } else {
-            die(Tools::jsonEncode(array(
+            die(json_encode(array(
                 'return' => true,
                 'message' => $module->l('Module Newsletter not activated')
             )));
@@ -176,6 +191,42 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
             ),
             array(),
             pSQL($email),
+            null,
+            null,
+            null,
+            null,
+            null,
+            _PS_MODULE_DIR_.'ps_emailsubscription/mails/',
+            false,
+            $this->context->shop->id
+        );
+    }
+
+    /**
+     * Send an email containing a voucher code.
+     *
+     * @param $email
+     * @param $code
+     *
+     * @return bool|int
+     */
+    protected function sendVoucher($email, $code)
+    {
+        $language = new Language($this->context->language->id);
+
+        return Mail::Send(
+            $this->context->language->id,
+            'newsletter_voucher',
+            $this->trans(
+                'Newsletter voucher',
+                array(),
+                'Emails.Subject',
+                $language->locale
+            ),
+            array(
+                '{discount}' => $code,
+            ),
+            $email,
             null,
             null,
             null,
