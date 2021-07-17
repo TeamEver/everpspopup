@@ -197,6 +197,10 @@ class EverPsPopupClass extends ObjectModel
             case 'cart':
                 $id_controller = 5;
                 break;
+
+            case 'orderopc':
+                $id_controller = 5;
+                break;
             
             default:
                 $id_controller = null;
