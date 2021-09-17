@@ -34,6 +34,11 @@
     padding:0 30%!important;
 }
 
+div#everpspopup_block_center img {
+    height: auto!important;
+    max-width: 100%!important;
+}
+
 /* Ipad */
 @media(max-width:1024px){
     .fancybox-slide{padding:0 0%!important;}
