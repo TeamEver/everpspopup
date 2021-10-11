@@ -11,7 +11,7 @@
     {if $everpspopup->link}<a href="{$everpspopup->link|escape:'htmlall':'UTF-8'}" rel="nofollow">{/if}
         <div class="container"{if $everpspopup->bgcolor} style="background-color:{$everpspopup->bgcolor|escape:'htmlall':'UTF-8'};"{/if}>
             <div class="row">
-                {if $everpspopup->content}<div class="rte col-xs-12">{$everpspopup->content nofilter}</div>{/if}
+                {if $everpspopup->content}<div class="rte col-12 col-xs-12">{$everpspopup->content nofilter}</div>{/if}
             </div>
         </div>
     {if $everpspopup->link}</a>{/if}

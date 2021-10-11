@@ -36,7 +36,7 @@ class Everpspopup extends Module
     {
         $this->name = 'everpspopup';
         $this->tab = 'administration';
-        $this->version = '3.6.5';
+        $this->version = '3.7.2';
         $this->author = 'Team Ever';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -159,6 +159,7 @@ class Everpspopup extends Module
             $this->html .= $this->context->smarty->fetch($this->local_path.'views/templates/admin/upgrade.tpl');
         }
         $this->html .= $this->renderForm();
+        $this->html .= $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
         $this->html .= $this->context->smarty->fetch($this->local_path.'views/templates/admin/footer.tpl');
 
         return $this->html;
@@ -370,7 +371,7 @@ class Everpspopup extends Module
                 return $this->display(__FILE__, 'errors.tpl', $this->getCacheId());
             }
         }
-        if ((bool)$this->context->customer->isLogged()) {
+        if ((bool)$this->context->customer->isLogged() === true) {
             $content = $this->changeShortcodes(
                 $everpopup->content,
                 (int)$this->context->customer->id

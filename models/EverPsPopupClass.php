@@ -22,6 +22,7 @@ class EverPsPopupClass extends ObjectModel
     public $id_everpspopup;
     public $id_shop;
     public $unlogged;
+    public $groups;
     public $newsletter;
     public $bgcolor;
     public $controller_array;
@@ -56,6 +57,12 @@ class EverPsPopupClass extends ObjectModel
                 'validate' => 'isBool',
                 'required' => false
             ),
+            'groups' => array(
+                'type' => self::TYPE_STRING,
+                'lang' => false,
+                'validate' => 'isJson',
+                'required' => true
+            ),
             'newsletter' => array(
                 'type' => self::TYPE_INT,
                 'lang' => false,
@@ -70,7 +77,7 @@ class EverPsPopupClass extends ObjectModel
             ),
             'controller_array' => array(
                 'type' => self::TYPE_INT,
-                'validate' => 'isunsignedInt',
+                'validate' => 'isUnsignedInt',
                 'required' => false
             ),
             'categories' => array(
@@ -177,6 +184,9 @@ class EverPsPopupClass extends ObjectModel
 
     public static function getPopupByIdController($id_shop, $id_lang, $controller)
     {
+        $customer_groups = Customer::getGroupsStatic(
+            (int)Context::getContext()->customer->id
+        );
         switch ($controller) {
             case 'cms':
                 $id_controller = 1;
@@ -220,6 +230,7 @@ class EverPsPopupClass extends ObjectModel
                 (int)$id_lang,
                 (int)$id_shop
             );
+            $allowed_groups = json_decode($everpopup->groups);
             if ($everpopup->date_start !='0000-00-00') {
                 if ($everpopup->date_start > $now) {
                     continue;
@@ -228,12 +239,56 @@ class EverPsPopupClass extends ObjectModel
                     continue;
                 }
             }
-
+            if (!is_array($allowed_groups)
+                || count($allowed_groups) <= 0
+                || !array_intersect($allowed_groups, $customer_groups)
+            ) {
+                continue;
+            }
             if ((int)$id_controller == (int)$everpopup->controller_array
                 || (int)$everpopup->controller_array == 6
             ) {
                 return $everpopup;
             }
         }
+    }
+
+    public static function getPopupGroups($id_everpspopup = false)
+    {
+        $ps_groups = Group::getGroups(
+            (int)Context::getContext()->cookie->id_lang,
+            (int)Context::getContext()->shop->id
+        );
+        $popup = new self(
+            (int)$id_everpspopup
+        );
+        $popup_groups = array();
+        foreach ($ps_groups as $ps_group) {
+            $group = new Group(
+                (int)$ps_group,
+                (int)Context::getContext()->language->id,
+                (int)Context::getContext()->shop->id
+            );
+            if (!in_array($group->id, $popup_groups)) {
+                $popup_groups[$group->id] = array(
+                    'id_group' => $group->id,
+                    'name' => $group->name
+                );
+            }
+        }
+        foreach (json_decode($popup->groups) as $p_group) {
+            $group = new Group(
+                (int)$p_group,
+                (int)Context::getContext()->language->id,
+                (int)Context::getContext()->shop->id
+            );
+            if (!in_array($group->id, $popup_groups)) {
+                $popup_groups[$group->id] = array(
+                    'id_group' => $group->id,
+                    'name' => $group->name
+                );
+            }
+        }
+        return $popup_groups; 
     }
 }

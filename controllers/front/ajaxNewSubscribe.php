@@ -42,10 +42,8 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
         $ps_activeNewsletter = false;
         if ($this->isSeven) {
             $ps_activeNewsletter = Module::isEnabled('ps_emailsubscription');
-            $ps_newsletter_module = Module::getInstanceByName('ps_emailsubscription');
         } else {
             $ps_activeNewsletter = Module::isEnabled('blocknewsletter');
-            $ps_newsletter_module = Module::getInstanceByName('blocknewsletter');
         }
 
         if ($ps_activeNewsletter) {
@@ -124,7 +122,7 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
             // Add new email address to newsletter table
             $newSubscription = Db::getInstance()->insert(
                 $table_newsletter_name,
-                array(  
+                array(
                     'id_shop' => (int)Context::getContext()->shop->id,
                     'id_shop_group' => (int)$id_group_shop ,
                     'email' => pSQL($user_email),
