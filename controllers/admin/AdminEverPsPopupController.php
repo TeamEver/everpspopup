@@ -282,6 +282,15 @@ class AdminEverPsPopupController extends ModuleAdminController
                 'title' => $this->l('Save'),
                 'class' => 'btn button pull-right'
             ),
+            'buttons' => array(
+                'import' => array(
+                    'name' => 'save_and_stay',
+                    'type' => 'submit',
+                    'class' => 'btn btn-default pull-right',
+                    'icon' => 'process-icon-save',
+                    'title' => $this->l('Save & stay')
+                ),
+            ),
             'input' => array(
                 array(
                     'type' => 'categories',
@@ -498,7 +507,7 @@ class AdminEverPsPopupController extends ModuleAdminController
         } else {
             $ps_newsletter = Module::isInstalled('blocknewsletter');
         }
-        if (Tools::isSubmit('save')) {
+        if (Tools::isSubmit('save') || Tools::isSubmit('save_and_stay')) {
             // die(var_dump(Tools::getValue('categories')));
             if (Tools::getValue('unlogged')
                 && !Validate::isBool(Tools::getValue('unlogged'))
@@ -619,6 +628,15 @@ class AdminEverPsPopupController extends ModuleAdminController
                 if ($everpopup->save()) {
                     $this->success[] = $this->l('Popup has been fully saved');
                     Tools::clearSmartyCache();
+                    if (Tools::isSubmit('save_and_stay') === true) {
+                        Tools::redirectAdmin(
+                            self::$currentIndex
+                            .'&updateeverpspopup=&id_everpspopup='
+                            .(int)$everpopup->id
+                            .'&token='
+                            .$this->token
+                        );
+                    }
                 } else {
                     $this->errors[] = $this->l('Can\'t update the current object');
                 }

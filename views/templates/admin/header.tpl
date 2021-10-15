@@ -39,10 +39,10 @@
             <p class="alert alert-warning">
                 {l s='This module is free and will always be ! You can support our free modules by making a donation by clicking the button below' mod='everpspopup'}
             </p>
-            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="display: flex;justify-content: center;">
             <input type="hidden" name="cmd" value="_s-xclick" />
             <input type="hidden" name="hosted_button_id" value="3LE8ABFYJKP98" />
-            <input type="image" src="https://www.team-ever.com/wp-content/uploads/2019/06/appel_a_dons-1.jpg" border="0" name="submit" title="Soutenez le développement des modules gratuits de Team Ever !" alt="Soutenez le développement des modules gratuits de Team Ever !" />
+            <input type="image" src="https://www.team-ever.com/wp-content/uploads/2019/06/appel_a_dons-1.jpg" border="0" name="submit" title="Soutenez le développement des modules gratuits de Team Ever !" alt="Soutenez le développement des modules gratuits de Team Ever !" style="width: 150px;" />
             <img alt="" border="0" src="https://www.paypal.com/fr_FR/i/scr/pixel.gif" width="1" height="1" />
             </form>
     </div>
