@@ -18,7 +18,7 @@
 
 <div class="panel row">
     <div class="col-md-6 col-xs-12">
-        <h3><i class="icon icon-credit-card"></i> {l s='Ever Popup' mod='everpspopup'}</h3>
+        <h3><i class="icon icon-smile"></i> {l s='Ever Popup' mod='everpspopup'}</h3>
         <img id="everlogo" src="{$everpspopup_dir|escape:'htmlall':'UTF-8'}/logo.png" style="max-width: 120px;">
     <p>
         <strong>{l s='Thank you for your confidence :-)' mod='everpspopup'}</strong>

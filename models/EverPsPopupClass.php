@@ -60,7 +60,7 @@ class EverPsPopupClass extends ObjectModel
             'groups' => array(
                 'type' => self::TYPE_STRING,
                 'lang' => false,
-                'validate' => 'isJson',
+                'validate' => 'isAnything',
                 'required' => true
             ),
             'newsletter' => array(
@@ -82,7 +82,7 @@ class EverPsPopupClass extends ObjectModel
             ),
             'categories' => array(
                 'type' => self::TYPE_STRING,
-                'validate' => 'isJson',
+                'validate' => 'isAnything',
                 'required' => false
             ),
             'name' => array(

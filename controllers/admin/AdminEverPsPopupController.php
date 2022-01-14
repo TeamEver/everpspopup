@@ -35,7 +35,7 @@ class AdminEverPsPopupController extends ModuleAdminController
         $this->module_name = 'everpspopup';
         $this->className = 'EverPsPopupClass';
         $this->context = Context::getContext();
-        $this->identifier = "id_everpspopup";
+        $this->identifier = 'id_everpspopup';
         $this->isSeven = Tools::version_compare(_PS_VERSION_, '1.7', '>=') ? true : false;
         $this->context->smarty->assign(array(
             'everpspopup_dir' => _MODULE_DIR_ . '/everpspopup/'
@@ -89,14 +89,12 @@ class AdminEverPsPopupController extends ModuleAdminController
      */
     public function initPageHeaderToolbar()
     {
-
         //Bouton d'ajout
         $this->page_header_toolbar_btn['new'] = array(
             'href' => self::$currentIndex . '&add' . $this->table . '&token=' . $this->token,
             'desc' => $this->l('Add new element'),
             'icon' => 'process-icon-new'
         );
-
         parent::initPageHeaderToolbar();
     }
 
@@ -170,7 +168,6 @@ class AdminEverPsPopupController extends ModuleAdminController
             return false;
         }
         $everpopup = $this->loadObject(true);
-
         // Check if bg exists
         if (Validate::isLoadedObject($everpopup)) {
             $selected_cat = json_decode($everpopup->categories);
@@ -282,6 +279,15 @@ class AdminEverPsPopupController extends ModuleAdminController
                 'title' => $this->l('Save'),
                 'class' => 'btn button pull-right'
             ),
+            'buttons' => array(
+                'import' => array(
+                    'name' => 'save_and_stay',
+                    'type' => 'submit',
+                    'class' => 'btn btn-default pull-right',
+                    'icon' => 'process-icon-save',
+                    'title' => $this->l('Save & stay')
+                ),
+            ),
             'input' => array(
                 array(
                     'type' => 'categories',
@@ -379,7 +385,7 @@ class AdminEverPsPopupController extends ModuleAdminController
                     'label' => $this->l('Popup content'),
                     'desc' => $this->l('Type popup content'),
                     'hint' => $this->l('Will appear in front-office'),
-                    'required' => false,
+                    'required' => true,
                     'name' => 'content',
                     'lang' => true,
                     'autoload_rte' => true
@@ -493,12 +499,13 @@ class AdminEverPsPopupController extends ModuleAdminController
 
     public function postProcess()
     {
+        parent::postProcess();
         if ($this->isSeven) {
             $ps_newsletter = Module::isInstalled('ps_emailsubscription');
         } else {
             $ps_newsletter = Module::isInstalled('blocknewsletter');
         }
-        if (Tools::isSubmit('save')) {
+        if (Tools::isSubmit('save') || Tools::isSubmit('save_and_stay')) {
             // die(var_dump(Tools::getValue('categories')));
             if (Tools::getValue('unlogged')
                 && !Validate::isBool(Tools::getValue('unlogged'))
@@ -521,12 +528,12 @@ class AdminEverPsPopupController extends ModuleAdminController
                  $this->errors[] = $this->l('Color is not valid');
             }
             if (Tools::getValue('controller_array')
-                && !Validate::isJson(json_encode(Tools::getValue('controller_array')))
+                && !Validate::isAnything(json_encode(Tools::getValue('controller_array')))
             ) {
                  $this->errors[] = $this->l('Controller is not valid');
             }
             if (Tools::getValue('controller_array')
-                && !Validate::isunsignedInt(Tools::getValue('controller_array'))
+                && !Validate::isUnsignedInt(Tools::getValue('controller_array'))
             ) {
                  $this->errors[] = $this->l('Controller is not valid');
             }
@@ -541,7 +548,7 @@ class AdminEverPsPopupController extends ModuleAdminController
                 $this->errors[] = $this->l('Error: allowed groups is not valid');
             }
             if (Tools::getValue('cookie_time')
-                && !Validate::isunsignedInt(Tools::getValue('cookie_time'))
+                && !Validate::isUnsignedInt(Tools::getValue('cookie_time'))
             ) {
                  $this->errors[] = $this->l('Cookie time is not valid');
             }
@@ -551,7 +558,7 @@ class AdminEverPsPopupController extends ModuleAdminController
                  $this->errors[] = $this->l('Adult mode is not valid');
             }
             if (Tools::getValue('delay')
-                && !Validate::isunsignedInt(Tools::getValue('delay'))
+                && !Validate::isUnsignedInt(Tools::getValue('delay'))
             ) {
                  $this->errors[] = $this->l('Delay is not valid');
             }
@@ -614,11 +621,61 @@ class AdminEverPsPopupController extends ModuleAdminController
                     $everpopup->link[$language['id_lang']] = Tools::getValue('link_'.$language['id_lang']);
                 }
             }
-
             if (!count($this->errors)) {
-                if ($everpopup->save()) {
+                if ($this->isSeven) {
+                    $saved = $everpopup->save();
+                } else {
+                    if (!Tools::getValue('id_everpspopup')) {
+                        $saved = $everpopup->save();
+                    } else {
+                        // Quick fix for fuckin' PS 1.6 not updating object
+                        $saved = true;
+                        $saved &= Db::getInstance()->update(
+                            $this->table,
+                            array(
+                                'active' => (int)Tools::getValue('active'),
+                                'id_shop' => (int)$this->context->shop->id,
+                                'unlogged' => (int)Tools::getValue('unlogged'),
+                                'groups' => json_encode(Tools::getValue('groupBox')),
+                                'newsletter' => (int)Tools::getValue('newsletter'),
+                                'bgcolor' => Tools::getValue('bgcolor'),
+                                'controller_array' => (int)Tools::getValue('controller_array'),
+                                'categories' => json_encode(Tools::getValue('categories')),
+                                'cookie_time' => (int)Tools::getValue('cookie_time'),
+                                'delay' => (int)Tools::getValue('delay'),
+                                'date_start' => Tools::getValue('date_start'),
+                                'date_end' => Tools::getValue('date_end'),
+                                'adult_mode' => (int)Tools::getValue('adult_mode'),
+                                'active' => (int)Tools::getValue('active')
+                            ),
+                            'id_everpspopup = '.(int)Tools::getValue('id_everpspopup')
+                        );
+                        foreach (Language::getLanguages(false) as $language) {
+                            $saved &= Db::getInstance()->update(
+                                $this->table.'_lang',
+                                array(
+                                    'name' => Tools::getValue('name_'.$language['id_lang']),
+                                    'content' => Tools::getValue('content_'.$language['id_lang']),
+                                    'link' => Tools::getValue('link_'.$language['id_lang']),
+                                ),
+                                'id_everpspopup = '.(int)Tools::getValue('id_everpspopup').' AND id_lang = '.$language['id_lang']
+                            );
+                        }
+                    }
+                }
+                if ((bool)$saved === true) {
                     $this->success[] = $this->l('Popup has been fully saved');
-                    Tools::clearSmartyCache();
+                    if (Tools::isSubmit('save_and_stay') === true) {
+                        Tools::redirectAdmin(
+                            self::$currentIndex
+                            .'&updateeverpspopup=&id_everpspopup='
+                            .(int)$everpopup->id
+                            .'&token='
+                            .$this->token
+                        );
+                    } else {
+                        Tools::redirectAdmin(self::$currentIndex.'&conf=4&token='.$this->token);
+                    }
                 } else {
                     $this->errors[] = $this->l('Can\'t update the current object');
                 }
@@ -628,8 +685,8 @@ class AdminEverPsPopupController extends ModuleAdminController
 
     protected function processBulkDelete()
     {
-        foreach (Tools::getValue($this->table.'Box') as $idEverBlock) {
-            $everpopup = new EverPsPopupClass((int)$idEverBlock);
+        foreach (Tools::getValue($this->table.'Box') as $idObj) {
+            $everpopup = new EverPsPopupClass((int)$idObj);
 
             if (!$everpopup->delete()) {
                 $this->errors[] = $this->l('An error has occurred: Can\'t delete the current object');
@@ -641,8 +698,8 @@ class AdminEverPsPopupController extends ModuleAdminController
 
     protected function processBulkDisable()
     {
-        foreach (Tools::getValue($this->table.'Box') as $idEverBlock) {
-            $everpopup = new EverPsPopupClass((int)$idEverBlock);
+        foreach (Tools::getValue($this->table.'Box') as $idObj) {
+            $everpopup = new EverPsPopupClass((int)$idObj);
             if ($everpopup->active) {
                 $everpopup->active = false;
             }
@@ -657,8 +714,8 @@ class AdminEverPsPopupController extends ModuleAdminController
 
     protected function processBulkEnable()
     {
-        foreach (Tools::getValue($this->table.'Box') as $idEverBlock) {
-            $everpopup = new EverPsPopupClass((int)$idEverBlock);
+        foreach (Tools::getValue($this->table.'Box') as $idObj) {
+            $everpopup = new EverPsPopupClass((int)$idObj);
             if (!$everpopup->active) {
                 $everpopup->active = true;
             }

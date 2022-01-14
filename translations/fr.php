@@ -18,6 +18,7 @@ $_MODULE['<{everpspopup}prestashop>everpspopup_af05e8aae21ae5d55b1769209a03d886'
 $_MODULE['<{everpspopup}prestashop>everpspopup_00e3923dde507539473b4e53b4067188'] = 'Erreur : le champ \"Utiliser Fancybox\" n\'est pas valide';
 $_MODULE['<{everpspopup}prestashop>everpspopup_7e953e0710725e2ffca1ec269eb0c69f'] = 'Erreur : le champ \"demander l\'âge\" n\'est pas valide';
 $_MODULE['<{everpspopup}prestashop>everpspopup_03cfbbac21f2cbbfe16c39f57376be35'] = 'Tous les réglages ont bien été sauvegardés';
+$_MODULE['<{everpspopup}prestashop>everpspopup_94d35d765c418afb582000ef400ae819'] = 'Popup Prestashop par Team Ever';
 $_MODULE['<{everpspopup}prestashop>admineverpspopupcontroller_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{everpspopup}prestashop>admineverpspopupcontroller_49ee3087348e8d44e1feda1917443987'] = 'Nom';
 $_MODULE['<{everpspopup}prestashop>admineverpspopupcontroller_ec53a8c4f07baed5d8825072c89799be'] = 'Etat';
@@ -45,6 +46,7 @@ $_MODULE['<{everpspopup}prestashop>admineverpspopupcontroller_db6cdf319ae363d1ac
 $_MODULE['<{everpspopup}prestashop>admineverpspopupcontroller_b9f5c797ebbf55adccdd8539a65a0241'] = 'Désactivé';
 $_MODULE['<{everpspopup}prestashop>admineverpspopupcontroller_0ad5ab913d66cdec248ddcdd6b96e4d9'] = 'Ajouter une nouvelle popup';
 $_MODULE['<{everpspopup}prestashop>admineverpspopupcontroller_c9cc8cce247e49bae79f15173ce97354'] = 'Sauvegarder';
+$_MODULE['<{everpspopup}prestashop>admineverpspopupcontroller_fe18323671e928a3fb8f4388159be29b'] = 'Sauvegarder & rester';
 $_MODULE['<{everpspopup}prestashop>admineverpspopupcontroller_3adbdb3ac060038aa0e6e6c138ef9873'] = 'Catégorie';
 $_MODULE['<{everpspopup}prestashop>admineverpspopupcontroller_2f12aaf07afd478ff0e3197a70638002'] = 'Afficher la popup sur des catégories spécifiques';
 $_MODULE['<{everpspopup}prestashop>admineverpspopupcontroller_f1252d5ff7d9423a58a4bec68eb50e03'] = 'Laisser vide pour ne pas utiliser';

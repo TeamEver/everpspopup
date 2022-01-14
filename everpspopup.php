@@ -36,7 +36,7 @@ class Everpspopup extends Module
     {
         $this->name = 'everpspopup';
         $this->tab = 'administration';
-        $this->version = '3.7.2';
+        $this->version = '4.1.3';
         $this->author = 'Team Ever';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -56,8 +56,13 @@ class Everpspopup extends Module
     public function install()
     {
         include(dirname(__FILE__).'/sql/install.php');
-        Configuration::updateValue('EVERPSPOPUP_FANCYBOX', true);
+        if ($this->isSeven) {
+            Configuration::updateValue('EVERPSPOPUP_FANCYBOX', true);
+        } else {
+            Configuration::updateValue('EVERPSPOPUP_FANCYBOX', false);
+        }
         Configuration::updateValue('EVERPSPOPUP_AGE', '18');
+        $this->createPopupDemo();
 
         if (!$this->isSeven) {
             return parent::install()
@@ -459,6 +464,50 @@ class Everpspopup extends Module
             $message = str_replace($key, $value, $message);
         }
         return $message;
+    }
+
+    private function createPopupDemo()
+    {
+        $shops = Shop::getShops();
+        foreach ($shops as $shop) {
+            $groups = Group::getGroups(
+                (int)Context::getContext()->language->id,
+                (int)$shop['id_shop']
+            );
+            $group_condition = array();
+            foreach ($groups as $group) {
+                $group_condition[] = (int)$group['id_group'];
+            }
+            $categories = Category::getSimpleCategories(
+                (int)Context::getContext()->language->id
+            );
+            $category_condition = array();
+            foreach ($categories as $category) {
+                $category_condition[] = (int)$category['id_category'];
+            }
+            // Create and save demo popup
+            $popup = new EverPsPopupClass();
+            $popup->id_shop = (int)$shop['id_shop'];
+            $popup->groups = json_encode($group_condition);
+            $popup->controller_array = 6;
+            $popup->categories = json_encode($category_condition);
+            $popup->cookie_time = 0;
+            $popup->delay = 5000;
+            $popup->active = 1;
+            foreach (Language::getLanguages(false) as $language) {
+                $popup->name[$language['id_lang']] = $this->l(
+                    'Prestashop popup by Team Ever'
+                );
+                $popup->content[$language['id_lang']] = '
+                <h1>Prestashop popup by Team Ever</h1>
+                <p>Hi, my name is Sudo !</p>
+                <p>I\'m a good girl, i like hugs and sweets</p>
+                <img src="https://www.team-ever.com/wp-content/uploads/2019/06/sudo-6.jpg" alt="Sudo Prestashop" title="Sudo Prestashop" style="width:100%;"/>
+                ';
+                $popup->link[$language['id_lang']] = 'https://www.team-ever.com/prestashop-ever-ultimate-seo/';
+            }
+            $popup->save();
+        }
     }
 
     public function checkLatestEverModuleVersion($module, $version)

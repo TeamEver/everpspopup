@@ -20,10 +20,6 @@
         <li>{l s='Under "preferences" tab on Prestashop 1.6' mod='everpspopup'}</li>
     </ul>
     <br>
-    <h4>{l s='What about overrides ?' mod='everpspopup'}</h3>
-    <p>{l s='An override is set by Ever Popup module. This override controls your popups validity.' mod='everpspopup'}</p>
-    <p>{l s='This override is uselesss for Prestashop 1.7, but if you are using Prestashop 1.6, please check if overrides are allowed on your shop.' mod='everpspopup'}</p>
-    <br>
     <h4>{l s='How can I change popup design ?' mod='everpspopup'}</h3>
     <p>{l s='Depending on your Prestashop version, you can change design with CSS code' mod='everpspopup'}</p>
     <p>{l s='CSS code should be added on :' mod='everpspopup'}</p>
