@@ -36,7 +36,7 @@ class Everpspopup extends Module
     {
         $this->name = 'everpspopup';
         $this->tab = 'administration';
-        $this->version = '4.1.3';
+        $this->version = '4.1.4';
         $this->author = 'Team Ever';
         $this->need_instance = 0;
         $this->bootstrap = true;

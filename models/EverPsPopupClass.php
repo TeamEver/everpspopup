@@ -232,10 +232,10 @@ class EverPsPopupClass extends ObjectModel
             );
             $allowed_groups = json_decode($everpopup->groups);
             if ($everpopup->date_start !='0000-00-00') {
-                if ($everpopup->date_start > $now) {
+                if ($everpopup->date_start < $now) {
                     continue;
                 }
-                if ($everpopup->date_end < $now) {
+                if ($everpopup->date_end > $now) {
                     continue;
                 }
             }
