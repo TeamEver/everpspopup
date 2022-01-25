@@ -49,7 +49,7 @@ class EverPsPopupClass extends ObjectModel
             'id_shop' => array(
                 'type' => self::TYPE_INT,
                 'validate' => 'isunsignedInt',
-                'required' => true
+                'required' => false
             ),
             'unlogged' => array(
                 'type' => self::TYPE_INT,
@@ -61,7 +61,7 @@ class EverPsPopupClass extends ObjectModel
                 'type' => self::TYPE_STRING,
                 'lang' => false,
                 'validate' => 'isAnything',
-                'required' => true
+                'required' => false
             ),
             'newsletter' => array(
                 'type' => self::TYPE_INT,
@@ -245,9 +245,8 @@ class EverPsPopupClass extends ObjectModel
             ) {
                 continue;
             }
-            if ((int)$id_controller == (int)$everpopup->controller_array
-                || (int)$everpopup->controller_array == 6
-            ) {
+            // 6 is all pages on shop
+            if ((int)$id_controller == (int)$everpopup->controller_array || (int)$everpopup->controller_array == 6) {
                 return $everpopup;
             }
         }

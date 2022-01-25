@@ -585,7 +585,7 @@ class AdminEverPsPopupController extends ModuleAdminController
             } else {
                 $everpopup = new EverPsPopupClass();
             }
-            $everpopup->id_shop = (int)$this->context->shop->id;
+            $everpopup->id_shop = (int)Context::getContext()->shop->id;
             $everpopup->unlogged = (int)Tools::getValue('unlogged');
             $everpopup->groups = json_encode(Tools::getValue('groupBox'));
             $everpopup->newsletter = (int)Tools::getValue('newsletter');

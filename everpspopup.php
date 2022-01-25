@@ -36,7 +36,7 @@ class Everpspopup extends Module
     {
         $this->name = 'everpspopup';
         $this->tab = 'administration';
-        $this->version = '4.1.4';
+        $this->version = '4.2.1';
         $this->author = 'Team Ever';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -344,6 +344,7 @@ class Everpspopup extends Module
     */
     public function hookDisplayBeforeBodyClosingTag()
     {
+        $this->_clearCache('everpspopup.tpl');
         $controller_name = Tools::getValue('controller');
         $everpopup = EverPsPopupClass::getPopupByIdController(
             (int)$this->context->shop->id,
@@ -402,6 +403,7 @@ class Everpspopup extends Module
         $everpopup->cookie_suffix = $this->cookie_suffix;
         $this->smarty->assign(
             array(
+                'controller_name' => $controller_name,
                 'everpspopup' => $everpopup,
                 'content' => $content,
                 'id_lang' => $this->context->language->id,
