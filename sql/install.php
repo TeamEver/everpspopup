@@ -29,7 +29,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'everpspopup` (
          `newsletter` tinyint(1) unsigned DEFAULT NULL,
          `bgcolor` varchar(255) DEFAULT NULL,
          `controller_array` int(10) unsigned DEFAULT NULL,
-         `categories` varchar(255) DEFAULT NULL,
+         `categories` text DEFAULT NULL,
          `cookie_time` int(10) unsigned DEFAULT NULL,
          `adult_mode` int(10) unsigned DEFAULT NULL,
          `delay` int(10) unsigned DEFAULT NULL,

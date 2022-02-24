@@ -168,9 +168,13 @@ class AdminEverPsPopupController extends ModuleAdminController
             return false;
         }
         $everpopup = $this->loadObject(true);
-        // Check if bg exists
+        // Check if obj exists
         if (Validate::isLoadedObject($everpopup)) {
             $selected_cat = json_decode($everpopup->categories);
+            $selected_cat = str_replace('[', '', $everpopup->categories);
+            $selected_cat = str_replace(']', '', $selected_cat);
+            $selected_cat = str_replace('"', '', $selected_cat);
+            $selected_cat = explode(',', $selected_cat);
             if (!is_array($selected_cat)) {
                 $selected_cat = array($selected_cat);
             }
@@ -331,26 +335,6 @@ class AdminEverPsPopupController extends ModuleAdminController
                         'name' => 'name'
                     )
                 ),
-                // array(
-                //     'type' => 'switch',
-                //     'label' => $this->l('For unlogged users'),
-                //     'desc' => $this->l('Popup only for unlogged users'),
-                //     'hint' => $this->l('Else will appear for each user'),
-                //     'name' => 'unlogged',
-                //     'is_bool' => true,
-                //     'values' => array(
-                //         array(
-                //             'id' => 'active_on',
-                //             'value' => true,
-                //             'label' => $this->l('Enabled')
-                //         ),
-                //         array(
-                //             'id' => 'active_off',
-                //             'value' => false,
-                //             'label' => $this->l('Disabled')
-                //         )
-                //     ),
-                // ),
                 array(
                     'type' => 'switch',
                     'label' => $this->l('Show newsletter subscription form ?'),
@@ -395,7 +379,6 @@ class AdminEverPsPopupController extends ModuleAdminController
                     'label' => $this->l('Popup link'),
                     'desc' => $this->l('Will make all popup cliquable'),
                     'hint' => $this->l('Leave empty for no use'),
-                    'required' => true,
                     'name' => 'link',
                     'lang' => true
                 ),
@@ -404,7 +387,6 @@ class AdminEverPsPopupController extends ModuleAdminController
                     'label' => $this->l('Popup content background color'),
                     'desc' => $this->l('Will change popup content color'),
                     'hint' => $this->l('Not all the popup, only content'),
-                    'required' => false,
                     'name' => 'bgcolor',
                 ),
                 array(
@@ -506,7 +488,6 @@ class AdminEverPsPopupController extends ModuleAdminController
             $ps_newsletter = Module::isInstalled('blocknewsletter');
         }
         if (Tools::isSubmit('save') || Tools::isSubmit('save_and_stay')) {
-            // die(var_dump(Tools::getValue('categories')));
             if (Tools::getValue('unlogged')
                 && !Validate::isBool(Tools::getValue('unlogged'))
             ) {
@@ -545,7 +526,14 @@ class AdminEverPsPopupController extends ModuleAdminController
             if (!Tools::getValue('groupBox')
                 || !Validate::isArrayWithIds(Tools::getValue('groupBox'))
             ) {
-                $this->errors[] = $this->l('Error: allowed groups is not valid');
+                $groups = Group::getGroups(
+                    (int)Context::getContext()->language->id,
+                    (int)$shop['id_shop']
+                );
+                $group_condition = array();
+                foreach ($groups as $group) {
+                    $group_condition[] = (int)$group['id_group'];
+                }
             }
             if (Tools::getValue('cookie_time')
                 && !Validate::isUnsignedInt(Tools::getValue('cookie_time'))
@@ -587,7 +575,11 @@ class AdminEverPsPopupController extends ModuleAdminController
             }
             $everpopup->id_shop = (int)Context::getContext()->shop->id;
             $everpopup->unlogged = (int)Tools::getValue('unlogged');
-            $everpopup->groups = json_encode(Tools::getValue('groupBox'));
+            if (isset($group_condition)) {
+                $everpopup->groups = json_encode($group_condition);
+            } else {
+                $everpopup->groups = json_encode(Tools::getValue('groupBox'));
+            }
             $everpopup->newsletter = (int)Tools::getValue('newsletter');
             $everpopup->bgcolor = Tools::getValue('bgcolor');
             $everpopup->controller_array = (int)Tools::getValue('controller_array');
