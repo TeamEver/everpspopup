@@ -170,6 +170,7 @@ class AdminEverPsPopupController extends ModuleAdminController
         $everpopup = $this->loadObject(true);
         // Check if obj exists
         if (Validate::isLoadedObject($everpopup)) {
+            // Convert string to array
             $selected_cat = json_decode($everpopup->categories);
             $selected_cat = str_replace('[', '', $everpopup->categories);
             $selected_cat = str_replace(']', '', $selected_cat);
@@ -488,11 +489,6 @@ class AdminEverPsPopupController extends ModuleAdminController
             $ps_newsletter = Module::isInstalled('blocknewsletter');
         }
         if (Tools::isSubmit('save') || Tools::isSubmit('save_and_stay')) {
-            if (Tools::getValue('unlogged')
-                && !Validate::isBool(Tools::getValue('unlogged'))
-            ) {
-                 $this->errors[] = $this->l('Unlogged is not valid');
-            }
             if (Tools::getValue('newsletter')
                 && !Validate::isBool(Tools::getValue('newsletter'))
             ) {
@@ -507,11 +503,6 @@ class AdminEverPsPopupController extends ModuleAdminController
                 && !Validate::isColor(Tools::getValue('bgcolor'))
             ) {
                  $this->errors[] = $this->l('Color is not valid');
-            }
-            if (Tools::getValue('controller_array')
-                && !Validate::isAnything(json_encode(Tools::getValue('controller_array')))
-            ) {
-                 $this->errors[] = $this->l('Controller is not valid');
             }
             if (Tools::getValue('controller_array')
                 && !Validate::isUnsignedInt(Tools::getValue('controller_array'))
@@ -574,7 +565,6 @@ class AdminEverPsPopupController extends ModuleAdminController
                 $everpopup = new EverPsPopupClass();
             }
             $everpopup->id_shop = (int)Context::getContext()->shop->id;
-            $everpopup->unlogged = (int)Tools::getValue('unlogged');
             if (isset($group_condition)) {
                 $everpopup->groups = json_encode($group_condition);
             } else {
@@ -591,7 +581,7 @@ class AdminEverPsPopupController extends ModuleAdminController
             $everpopup->adult_mode = (int)Tools::getValue('adult_mode');
             $everpopup->active = (int)Tools::getValue('active');
             foreach (Language::getLanguages(false) as $language) {
-                if (!Tools::getIsset('name_'.$language['id_lang'])
+                if (!Tools::getValue('name_'.$language['id_lang'])
                     || !Validate::isGenericName(Tools::getValue('name_'.$language['id_lang']))
                 ) {
                     $this->errors[] = $this->l('Name is not valid for lang ').$language['id_lang'];
@@ -605,7 +595,7 @@ class AdminEverPsPopupController extends ModuleAdminController
                 } else {
                     $everpopup->content[$language['id_lang']] = Tools::getValue('content_'.$language['id_lang']);
                 }
-                if (!Tools::getIsset('link_'.$language['id_lang'])
+                if (!Tools::getValue('link_'.$language['id_lang'])
                     && !Validate::isUrl(Tools::getValue('link_'.$language['id_lang']))
                 ) {
                     $this->errors[] = $this->l('Link is not valid for lang ').$language['id_lang'];
@@ -627,7 +617,6 @@ class AdminEverPsPopupController extends ModuleAdminController
                             array(
                                 'active' => (int)Tools::getValue('active'),
                                 'id_shop' => (int)$this->context->shop->id,
-                                'unlogged' => (int)Tools::getValue('unlogged'),
                                 'groups' => json_encode(Tools::getValue('groupBox')),
                                 'newsletter' => (int)Tools::getValue('newsletter'),
                                 'bgcolor' => Tools::getValue('bgcolor'),
@@ -646,11 +635,11 @@ class AdminEverPsPopupController extends ModuleAdminController
                             $saved &= Db::getInstance()->update(
                                 $this->table.'_lang',
                                 array(
-                                    'name' => Tools::getValue('name_'.$language['id_lang']),
-                                    'content' => Tools::getValue('content_'.$language['id_lang']),
-                                    'link' => Tools::getValue('link_'.$language['id_lang']),
+                                    'name' => Tools::getValue('name_'.(int)$language['id_lang']),
+                                    'content' => Tools::getValue('content_'.(int)$language['id_lang']),
+                                    'link' => Tools::getValue('link_'.(int)$language['id_lang']),
                                 ),
-                                'id_everpspopup = '.(int)Tools::getValue('id_everpspopup').' AND id_lang = '.$language['id_lang']
+                                'id_everpspopup = '.(int)Tools::getValue('id_everpspopup').' AND id_lang = '.(int)$language['id_lang']
                             );
                         }
                     }
@@ -660,7 +649,11 @@ class AdminEverPsPopupController extends ModuleAdminController
                     if (Tools::isSubmit('save_and_stay') === true) {
                         Tools::redirectAdmin(
                             self::$currentIndex
-                            .'&updateeverpspopup=&id_everpspopup='
+                            .'&update'
+                            .$this->table
+                            .'&'
+                            .$this->identifier
+                            .'='
                             .(int)$everpopup->id
                             .'&token='
                             .$this->token

@@ -21,7 +21,6 @@ class EverPsPopupClass extends ObjectModel
 {
     public $id_everpspopup;
     public $id_shop;
-    public $unlogged;
     public $groups;
     public $newsletter;
     public $bgcolor;
@@ -49,12 +48,6 @@ class EverPsPopupClass extends ObjectModel
             'id_shop' => array(
                 'type' => self::TYPE_INT,
                 'validate' => 'isunsignedInt',
-                'required' => false
-            ),
-            'unlogged' => array(
-                'type' => self::TYPE_INT,
-                'lang' => false,
-                'validate' => 'isBool',
                 'required' => false
             ),
             'groups' => array(

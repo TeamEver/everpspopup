@@ -26,7 +26,6 @@
         <p>
             {l s='Thanks for using Team Ever\'s modules' mod='everpspopup'}.<br />
             <strong>{l s='If you want to use newsletter subscription form, please make sure default Prestashop newsletter module is installed' mod='everpspopup'}</strong><br />
-            <strong>{l s='Please enable overrides. Module won\'t work until overrides are enabled' mod='everpspopup'}</strong><br />
         </p>
         {if isset($popup_admin_link) && $popup_admin_link}
         <a href="{$popup_admin_link|escape:'htmlall':'UTF-8'}" class="btn btn-lg btn-success">{l s='Manage popups' mod='everpspopup'}</a>

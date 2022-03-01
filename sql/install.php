@@ -24,7 +24,6 @@ $sql = array();
 $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'everpspopup` (
          `id_everpspopup` int(10) unsigned NOT NULL auto_increment,
          `id_shop` int(10) unsigned NOT NULL,
-         `unlogged` tinyint(1) unsigned DEFAULT NULL,
          `groups` varchar(255) DEFAULT NULL,
          `newsletter` tinyint(1) unsigned DEFAULT NULL,
          `bgcolor` varchar(255) DEFAULT NULL,

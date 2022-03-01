@@ -41,6 +41,10 @@ function upgrade_module_5_1_1()
         'ALTER TABLE '._DB_PREFIX_.'everpspopup
          MODIFY COLUMN `categories` text DEFAULT NULL;
     ';
+    $sql[] =
+        'ALTER TABLE '._DB_PREFIX_.'everpspopup
+         DROP COLUMN `unlogged`;
+    ';
 
     foreach ($sql as $s) {
         $result &= Db::getInstance()->execute($s);
