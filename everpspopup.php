@@ -36,7 +36,7 @@ class Everpspopup extends Module
     {
         $this->name = 'everpspopup';
         $this->tab = 'administration';
-        $this->version = '5.2.2';
+        $this->version = '5.2.3';
         $this->author = 'Team Ever';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -353,15 +353,6 @@ class Everpspopup extends Module
         );
         if (!Validate::isLoadedObject($everpopup)) {
             return;
-        }
-        // Only unlogged users
-        if ($everpopup->unlogged && (bool)$this->context->customer->isLogged()) {
-            $this->smarty->assign(
-                array(
-                    'ever_errors' => 'only for unlogged',
-                )
-            );
-            return $this->display(__FILE__, 'errors.tpl', $this->getCacheId());
         }
         // Allowed categories
         if ($everpopup->controller_array == 3 && $everpopup->categories) {
