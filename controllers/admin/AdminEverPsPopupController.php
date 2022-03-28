@@ -1,6 +1,6 @@
 <?php
 /**
- * 2019-2021 Team Ever
+ * 2019-2022 Team Ever
  *
  * NOTICE OF LICENSE
  *
@@ -13,7 +13,7 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  *  @author    Team Ever <https://www.team-ever.com/>
- *  @copyright 2019-2021 Team Ever
+ *  @copyright 2019-2022 Team Ever
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -529,32 +529,32 @@ class AdminEverPsPopupController extends ModuleAdminController
             if (Tools::getValue('cookie_time')
                 && !Validate::isUnsignedInt(Tools::getValue('cookie_time'))
             ) {
-                 $this->errors[] = $this->l('Cookie time is not valid');
+                $this->errors[] = $this->l('Cookie time is not valid');
             }
             if (Tools::getValue('adult_mode')
                 && !Validate::isBool(Tools::getValue('adult_mode'))
             ) {
-                 $this->errors[] = $this->l('Adult mode is not valid');
+                $this->errors[] = $this->l('Adult mode is not valid');
             }
             if (Tools::getValue('delay')
                 && !Validate::isUnsignedInt(Tools::getValue('delay'))
             ) {
-                 $this->errors[] = $this->l('Delay is not valid');
+                $this->errors[] = $this->l('Delay is not valid');
             }
             if (Tools::getValue('date_start')
                 && !Validate::isDateFormat(Tools::getValue('date_start'))
             ) {
-                 $this->errors[] = $this->l('Date start is not valid');
+                $this->errors[] = $this->l('Date start is not valid');
             }
             if (Tools::getValue('date_end')
                 && !Validate::isDateFormat(Tools::getValue('date_end'))
             ) {
-                 $this->errors[] = $this->l('Date end is not valid');
+                $this->errors[] = $this->l('Date end is not valid');
             }
             if (Tools::getValue('active')
                 && !Validate::isBool(Tools::getValue('active'))
             ) {
-                 $this->errors[] = $this->l('Active is not valid');
+                $this->errors[] = $this->l('Active is not valid');
             }
 
             if (Tools::getValue('id_everpspopup')) {
@@ -581,24 +581,18 @@ class AdminEverPsPopupController extends ModuleAdminController
             $everpopup->adult_mode = (int)Tools::getValue('adult_mode');
             $everpopup->active = (int)Tools::getValue('active');
             foreach (Language::getLanguages(false) as $language) {
-                if (!Tools::getValue('name_'.$language['id_lang'])
-                    || !Validate::isGenericName(Tools::getValue('name_'.$language['id_lang']))
-                ) {
-                    $this->errors[] = $this->l('Name is not valid for lang ').$language['id_lang'];
+                if (!Validate::isGenericName(Tools::getValue('name_'.$language['id_lang']))) {
+                    $this->errors[] = $this->l('Name is not valid');
                 } else {
                     $everpopup->name[$language['id_lang']] = Tools::getValue('name_'.$language['id_lang']);
                 }
-                if (Tools::getValue('content_'.$language['id_lang'])
-                    && !Validate::isCleanHtml(Tools::getValue('content_'.$language['id_lang']))
-                ) {
-                    $this->errors[] = $this->l('Content is not valid for lang ').$language['id_lang'];
+                if (!Validate::isCleanHtml(Tools::getValue('content_'.$language['id_lang']))) {
+                    $this->errors[] = $this->l('Content is not valid');
                 } else {
                     $everpopup->content[$language['id_lang']] = Tools::getValue('content_'.$language['id_lang']);
                 }
-                if (!Tools::getValue('link_'.$language['id_lang'])
-                    && !Validate::isUrl(Tools::getValue('link_'.$language['id_lang']))
-                ) {
-                    $this->errors[] = $this->l('Link is not valid for lang ').$language['id_lang'];
+                if (!Validate::isUrl(Tools::getValue('link_'.$language['id_lang']))) {
+                    $this->errors[] = $this->l('Name is not valid');
                 } else {
                     $everpopup->link[$language['id_lang']] = Tools::getValue('link_'.$language['id_lang']);
                 }

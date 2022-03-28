@@ -1,6 +1,6 @@
 <?php
 /**
- * 2019-2021 Team Ever
+ * 2019-2022 Team Ever
  *
  * NOTICE OF LICENSE
  *
@@ -13,7 +13,7 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  *  @author    Team Ever <https://www.team-ever.com/>
- *  @copyright 2019-2021 Team Ever
+ *  @copyright 2019-2022 Team Ever
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -47,7 +47,7 @@ class EverPsPopupClass extends ObjectModel
         'fields' => array(
             'id_shop' => array(
                 'type' => self::TYPE_INT,
-                'validate' => 'isunsignedInt',
+                'validate' => 'isUnsignedInt',
                 'required' => false
             ),
             'groups' => array(
@@ -77,16 +77,6 @@ class EverPsPopupClass extends ObjectModel
                 'type' => self::TYPE_STRING,
                 'validate' => 'isAnything',
                 'required' => false
-            ),
-            'name' => array(
-                'type' => self::TYPE_STRING,
-                'lang' => true,
-                'validate' => 'isGenericName'
-            ),
-            'link' => array(
-                'type' => self::TYPE_STRING,
-                'lang' => true,
-                'validate' => 'isUrl'
             ),
             'cookie_time' => array(
                 'type' => self::TYPE_INT,
@@ -125,6 +115,16 @@ class EverPsPopupClass extends ObjectModel
                 'required' => false
             ),
             // lang fields
+            'link' => array(
+                'type' => self::TYPE_STRING,
+                'lang' => true,
+                'validate' => 'isUrl'
+            ),
+            'name' => array(
+                'type' => self::TYPE_STRING,
+                'lang' => true,
+                'validate' => 'isGenericName'
+            ),
             'content' => array(
                 'type' => self::TYPE_HTML,
                 'lang' => true,
@@ -279,6 +279,6 @@ class EverPsPopupClass extends ObjectModel
                 );
             }
         }
-        return $popup_groups; 
+        return $popup_groups;
     }
 }
