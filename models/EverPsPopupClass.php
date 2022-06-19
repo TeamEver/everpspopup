@@ -29,6 +29,7 @@ class EverPsPopupClass extends ObjectModel
     public $name;
     public $content;
     public $link;
+    public $carrier;
     public $cookie_time;
     public $adult_mode;
     public $delay;
@@ -76,6 +77,12 @@ class EverPsPopupClass extends ObjectModel
             'categories' => array(
                 'type' => self::TYPE_STRING,
                 'validate' => 'isAnything',
+                'required' => false
+            ),
+            'carrier' => array(
+                'type' => self::TYPE_INT,
+                'lang' => false,
+                'validate' => 'isUnsignedId',
                 'required' => false
             ),
             'cookie_time' => array(
@@ -202,6 +209,10 @@ class EverPsPopupClass extends ObjectModel
                 break;
 
             case 'orderopc':
+                $id_controller = 5;
+                break;
+
+            case 'order':
                 $id_controller = 5;
                 break;
             

@@ -6,8 +6,8 @@
 * @link https://www.team-ever.com
 *}
 
-<a href="#everpspopup_block_center" rel="nofollow" data-fancybox id="ever_fancy_mark"></a>
-<div id="everpspopup_block_center" data-delay="{$everpspopup->delay|escape:'htmlall':'UTF-8'}" data-adult="{$everpspopup->adult_mode|escape:'htmlall':'UTF-8'}" data-expire="{$everpspopup->cookie_time|escape:'htmlall':'UTF-8'}" data-cookiesuffix="{$everpspopup->controller_array|escape:'htmlall':'UTF-8'}{$everpspopup->cookie_suffix|escape:'htmlall':'UTF-8'}" class="Everpopup_block" style="display:none;">
+<a href="#everpspopup_block_center" {if isset($everpspopup->carrier) && $everpspopup->carrier > 0}data-carrier="{$everpspopup->carrier|escape:'htmlall':'UTF-8'}"{/if} rel="nofollow" data-fancybox id="ever_fancy_mark"></a>
+<div id="everpspopup_block_center" {if isset($everpspopup->carrier) && $everpspopup->carrier > 0}data-carrier="{$everpspopup->carrier|escape:'htmlall':'UTF-8'}"{/if} data-delay="{$everpspopup->delay|escape:'htmlall':'UTF-8'}" data-adult="{$everpspopup->adult_mode|escape:'htmlall':'UTF-8'}" data-expire="{$everpspopup->cookie_time|escape:'htmlall':'UTF-8'}" data-cookiesuffix="{$everpspopup->controller_array|escape:'htmlall':'UTF-8'}{$everpspopup->cookie_suffix|escape:'htmlall':'UTF-8'}" class="Everpopup_block" style="display:none;">
     {if $everpspopup->link}<a href="{$everpspopup->link|escape:'htmlall':'UTF-8'}" rel="nofollow">{/if}
         <div class="container"{if $everpspopup->bgcolor} style="background-color:{$everpspopup->bgcolor|escape:'htmlall':'UTF-8'};"{/if}>
             <div class="row">

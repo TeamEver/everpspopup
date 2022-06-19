@@ -137,8 +137,28 @@
     } else {
         var popcontent = 1;
     }
-
-    if ($('#ever_fancy_mark').length) {
+    if ($('#ever_fancy_mark').length && $('#ever_fancy_mark').data('carrier')) {
+        var id_carrier = $('#ever_fancy_mark').data('carrier');
+        $('input[value="'+id_carrier+',"], input[value="'+id_carrier+'"]').click(function(e){
+            $('#ever_fancy_mark').fancybox({
+                'type'  :   'inline',
+                'transitionIn'  :   'elastic',
+                'transitionOut' :   'elastic',
+                'speedIn'       :   600,
+                'speedOut'      :   200,
+                'hideOnContentClick'    :   true,
+                'overlayShow'   :   false,
+                'opacity' : 1,
+                'beforeClose': function() {
+                    $.cookie('everpspopup' + cookie_suffix, popcontent, { expires: cookie_time});
+                },
+            }).trigger('click');
+            $(window).bind('beforeunload', function(){
+              $.cookie('everpspopup' + cookie_suffix, popcontent, { expires: cookie_time});
+            });
+        })
+    }
+    if ($('#ever_fancy_mark').length && !$('#ever_fancy_mark').data('carrier')) {
         setTimeout(function() {
             if ($.cookie('everpspopup' + cookie_suffix) != popcontent) {
                 if (adult_mode) {

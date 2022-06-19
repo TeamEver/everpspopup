@@ -215,7 +215,7 @@ class AdminEverPsPopupController extends ModuleAdminController
             ),
             array(
                 'id_option' => 5,
-                'name' => $this->l('Cart page only')
+                'name' => $this->l('Cart & order pages only')
             ),
             array(
                 'id_option' => 6,
@@ -274,7 +274,14 @@ class AdminEverPsPopupController extends ModuleAdminController
               'name' => $this->l('Disabled')
             )
         );
-
+        $carriers = Carrier::getCarriers(
+            (int)$this->context->language->id,
+            false,
+            false,
+            false,
+            null,
+            Carrier::ALL_CARRIERS
+        );
         // Building the Add/Edit form
         $this->fields_form = array(
             'tinymce' => true,
@@ -320,6 +327,19 @@ class AdminEverPsPopupController extends ModuleAdminController
                     'options' => array(
                         'query' => $showCondition,
                         'id' => 'id_option',
+                        'name' => 'name'
+                    )
+                ),
+                array(
+                    'type' => 'select',
+                    'label' => $this->l('Show the popup on carrier selection ?'),
+                    'desc' => $this->l('You can select here carrier. On select, popup will be triggered'),
+                    'hint' => $this->l('Controller must be selected to cart & order pages'),
+                    'name' => 'carrier',
+                    'required' => true,
+                    'options' => array(
+                        'query' => $carriers,
+                        'id' => 'id_carrier',
                         'name' => 'name'
                     )
                 ),
@@ -526,6 +546,11 @@ class AdminEverPsPopupController extends ModuleAdminController
                     $group_condition[] = (int)$group['id_group'];
                 }
             }
+            if (Tools::getValue('carrier')
+                && !Validate::isUnsignedInt(Tools::getValue('carrier'))
+            ) {
+                $this->errors[] = $this->l('Carrier is not valid');
+            }
             if (Tools::getValue('cookie_time')
                 && !Validate::isUnsignedInt(Tools::getValue('cookie_time'))
             ) {
@@ -574,6 +599,7 @@ class AdminEverPsPopupController extends ModuleAdminController
             $everpopup->bgcolor = Tools::getValue('bgcolor');
             $everpopup->controller_array = (int)Tools::getValue('controller_array');
             $everpopup->categories = json_encode(Tools::getValue('categories'));
+            $everpopup->carrier = Tools::getValue('carrier');
             $everpopup->cookie_time = (int)Tools::getValue('cookie_time');
             $everpopup->delay = (int)Tools::getValue('delay');
             $everpopup->date_start = Tools::getValue('date_start');
