@@ -15,8 +15,9 @@
  *  @copyright 2019-2022 Team Ever
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+
  $(document).ready(function(){
-    var cookie_time = $('#everpspopup_block_center').data('expire');
+    var cookie_time = $('#everpspopup_block_center').data('expire')?$('#everpspopup_block_center').data('expire'):90061; //set cookie on 1day1hour1minute if not set in config
     var adult_mode = $('#everpspopup_block_center').data('adult');
     var delay = parseInt($('#everpspopup_block_center').data('delay'));
     var cookie_suffix = $('#everpspopup_block_center').data('cookiesuffix');
@@ -158,7 +159,8 @@
             });
         })
     }
-    if ($('#ever_fancy_mark').length && !$('#ever_fancy_mark').data('carrier')) {
+    //check if there's atleast 1 pop-up and if carrier is set
+    if ($('#ever_fancy_mark').length>=1 && $('#ever_fancy_mark').data('carrier') != 0) { 
         setTimeout(function() {
             if ($.cookie('everpspopup' + cookie_suffix) != popcontent) {
                 if (adult_mode) {
@@ -176,8 +178,9 @@
                         'closeBtn' : false,
                         'opacity' : 1,
                         beforeClose : function () {
-                            return false;
+                            return false; //prevent clicking on sides to close the pop-up
                         },
+                        touch: false //prevent from dragging to close the pop-up
                     }).trigger('click');
                     $('.fancybox-close-small, .fancybox-skin .fancybox-close').hide();
                     $('.fancybox-bg, .fancybox-stage, .fancybox-overlay, .fancybox-overlay-fixed').css('background-color', '#000000');
