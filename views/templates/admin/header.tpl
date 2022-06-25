@@ -33,6 +33,9 @@
         {if isset($module_link) && $module_link}
         <a href="{$module_link|escape:'htmlall':'UTF-8'}" class="btn btn-lg btn-success">{l s='Module configuration' mod='everpspopup'}</a>
         {/if}
+        {if isset($module_link) && $module_link}
+        <a href="{$module_link|escape:'htmlall':'UTF-8'}#everpspopup_doc" class="btn btn-lg btn-info">{l s='Read documentation' mod='everpspopup'}</a>
+        {/if}
     </div>
     <div class="col-md-6">
             <p class="alert alert-warning">

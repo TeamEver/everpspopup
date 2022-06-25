@@ -6,10 +6,10 @@
 * @link https://www.team-ever.com
 *}
 
-<div class="alert alert-info">
+<div class="alert alert-info" id="everpspopup_doc">
     <h4>{l s='When do I have to set or unset Fancybox ?' mod='everpspopup'}</h3>
     <p>{l s='First of all, if you are using Leo Theme (and you should\'nt), please disable Fancybox.' mod='everpspopup'}</p>
-    <p>{l s='If popups are not shown, please disable Fancybox and try again.' mod='everpspopup'}</p>
+    <p><strong>{l s='If popups are not shown, please disable Fancybox and try again.' mod='everpspopup'}</strong></p>
     <p>{l s='Try your first popup for all users, all groups, and with a unlimitted cookie.' mod='everpspopup'}</p>
     <p>{l s='If you have some troubles, don\'t forget to ask on our website, we\'ll be glad to help.' mod='everpspopup'}</p>
     <br>
