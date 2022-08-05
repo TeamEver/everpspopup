@@ -39,8 +39,12 @@ function upgrade_module_3_7_1()
     $sql = array();
     $sql[] =
         'ALTER TABLE '._DB_PREFIX_.'everpspopup
-         ADD `groups` varchar(255) DEFAULT NULL
-         AFTER `unlogged`;
+         DROP COLUMN `unlogged`;
+    ';
+    $sql[] =
+        'ALTER TABLE `'._DB_PREFIX_.'everpspopup`
+         ADD `groups` text DEFAULT NULL,
+         AFTER `id_shop`;
     ';
 
     foreach ($sql as $s) {

@@ -168,112 +168,36 @@ class AdminEverPsPopupController extends ModuleAdminController
             return false;
         }
         $everpopup = $this->loadObject(true);
+        $selected_cat = array();
+
+        // die(var_dump($everpopup));
+
         // Check if obj exists
         if (Validate::isLoadedObject($everpopup)) {
             // Convert string to array
             $selected_cat = json_decode($everpopup->categories);
-            $selected_cat = str_replace('[', '', $everpopup->categories);
-            $selected_cat = str_replace(']', '', $selected_cat);
-            $selected_cat = str_replace('"', '', $selected_cat);
-            $selected_cat = explode(',', $selected_cat);
+            // $selected_cat = str_replace('[', '', $everpopup->categories);
+            // $selected_cat = str_replace(']', '', $selected_cat);
+            // $selected_cat = str_replace('"', '', $selected_cat);
+            // $selected_cat = explode(',', $selected_cat);
             if (!is_array($selected_cat)) {
                 $selected_cat = array($selected_cat);
             }
-            $tree = array(
-                'selected_categories' => $selected_cat,
-                'use_search' => true,
-                'use_checkbox' => true,
-                'id' => 'id_category_tree',
-            );
-        } else {
-            $selected_cat = array();
-            $tree = array(
-                'selected_categories' => $selected_cat,
-                'use_search' => true,
-                'use_checkbox' => true,
-                'id' => 'id_category_tree',
-            );
         }
 
-        // build conditions array
-        $showCondition = array(
-            array(
-                'id_option' => 1,
-                'name' => $this->l('CMS only')
-            ),
-            array(
-                'id_option' => 2,
-                'name' => $this->l('Products only')
-            ),
-            array(
-                'id_option' => 3,
-                'name' => $this->l('Categories only')
-            ),
-            array(
-                'id_option' => 4,
-                'name' => $this->l('Home only')
-            ),
-            array(
-                'id_option' => 5,
-                'name' => $this->l('Cart & order pages only')
-            ),
-            array(
-                'id_option' => 6,
-                'name' => $this->l('All')
-            ),
+        $tree = array(
+            'selected_categories' => $selected_cat,
+            'use_search' => true,
+            'use_checkbox' => true,
+            'id' => 'id_category_tree',
         );
 
+        // build conditions array
+        $showCondition = $this->getConditionList();
+
         // build cookie_time array
-        $cookie_time = array(
-            array(
-              'id_option' => 1,
-              'name' => $this->l('1 day')
-            ),
-            array(
-              'id_option' => 2,
-              'name' => $this->l('2 days')
-            ),
-            array(
-              'id_option' => 3,
-              'name' => $this->l('3 days')
-            ),
-            array(
-              'id_option' => 4,
-              'name' => $this->l('4 days')
-            ),
-            array(
-              'id_option' => 5,
-              'name' => $this->l('5 days')
-            ),
-            array(
-              'id_option' => 7,
-              'name' => $this->l('7 days')
-            ),
-            array(
-              'id_option' => 10,
-              'name' => $this->l('10 days')
-            ),
-            array(
-              'id_option' => 15,
-              'name' => $this->l('15 days')
-            ),
-            array(
-              'id_option' => 20,
-              'name' => $this->l('20 days')
-            ),
-            array(
-              'id_option' => 30,
-              'name' => $this->l('30 days')
-            ),
-            array(
-              'id_option' => 60,
-              'name' => $this->l('60 days')
-            ),
-            array(
-              'id_option' => 0,
-              'name' => $this->l('Disabled')
-            )
-        );
+        $cookie_time = $this->getCookieList();
+
         $carriers = Carrier::getCarriers(
             (int)$this->context->language->id,
             false,
@@ -502,38 +426,20 @@ class AdminEverPsPopupController extends ModuleAdminController
 
     public function postProcess()
     {
-        parent::postProcess();
         if ($this->isSeven) {
             $ps_newsletter = Module::isInstalled('ps_emailsubscription');
         } else {
             $ps_newsletter = Module::isInstalled('blocknewsletter');
         }
+
+
         if (Tools::isSubmit('save') || Tools::isSubmit('save_and_stay')) {
-            if (Tools::getValue('newsletter')
-                && !Validate::isBool(Tools::getValue('newsletter'))
-            ) {
-                 $this->errors[] = $this->l('Newsletter is not valid');
+            $this->validateProcess();
+
+            if (count($this->errors)) {
+                return false;
             }
-            if (Tools::getValue('newsletter')
-                && !$ps_newsletter
-            ) {
-                 $this->errors[] = $this->l('Newsletter module is not installed');
-            }
-            if (Tools::getValue('bgcolor')
-                && !Validate::isColor(Tools::getValue('bgcolor'))
-            ) {
-                 $this->errors[] = $this->l('Color is not valid');
-            }
-            if (Tools::getValue('controller_array')
-                && !Validate::isUnsignedInt(Tools::getValue('controller_array'))
-            ) {
-                 $this->errors[] = $this->l('Controller is not valid');
-            }
-            if (Tools::getValue('categories')
-                && !Validate::isArrayWithIds(Tools::getValue('categories'))
-            ) {
-                 $this->errors[] = $this->l('Controller is not valid');
-            }
+
             if (!Tools::getValue('groupBox')
                 || !Validate::isArrayWithIds(Tools::getValue('groupBox'))
             ) {
@@ -545,41 +451,6 @@ class AdminEverPsPopupController extends ModuleAdminController
                 foreach ($groups as $group) {
                     $group_condition[] = (int)$group['id_group'];
                 }
-            }
-            if (Tools::getValue('carrier')
-                && !Validate::isUnsignedInt(Tools::getValue('carrier'))
-            ) {
-                $this->errors[] = $this->l('Carrier is not valid');
-            }
-            if (Tools::getValue('cookie_time')
-                && !Validate::isUnsignedInt(Tools::getValue('cookie_time'))
-            ) {
-                $this->errors[] = $this->l('Cookie time is not valid');
-            }
-            if (Tools::getValue('adult_mode')
-                && !Validate::isBool(Tools::getValue('adult_mode'))
-            ) {
-                $this->errors[] = $this->l('Adult mode is not valid');
-            }
-            if (Tools::getValue('delay')
-                && !Validate::isUnsignedInt(Tools::getValue('delay'))
-            ) {
-                $this->errors[] = $this->l('Delay is not valid');
-            }
-            if (Tools::getValue('date_start')
-                && !Validate::isDateFormat(Tools::getValue('date_start'))
-            ) {
-                $this->errors[] = $this->l('Date start is not valid');
-            }
-            if (Tools::getValue('date_end')
-                && !Validate::isDateFormat(Tools::getValue('date_end'))
-            ) {
-                $this->errors[] = $this->l('Date end is not valid');
-            }
-            if (Tools::getValue('active')
-                && !Validate::isBool(Tools::getValue('active'))
-            ) {
-                $this->errors[] = $this->l('Active is not valid');
             }
 
             if (Tools::getValue('id_everpspopup')) {
@@ -607,83 +478,74 @@ class AdminEverPsPopupController extends ModuleAdminController
             $everpopup->adult_mode = (int)Tools::getValue('adult_mode');
             $everpopup->active = (int)Tools::getValue('active');
             foreach (Language::getLanguages(false) as $language) {
-                if (!Validate::isGenericName(Tools::getValue('name_'.$language['id_lang']))) {
-                    $this->errors[] = $this->l('Name is not valid');
-                } else {
-                    $everpopup->name[$language['id_lang']] = Tools::getValue('name_'.$language['id_lang']);
-                }
-                if (!Validate::isCleanHtml(Tools::getValue('content_'.$language['id_lang']))) {
-                    $this->errors[] = $this->l('Content is not valid');
-                } else {
-                    $everpopup->content[$language['id_lang']] = Tools::getValue('content_'.$language['id_lang']);
-                }
-                if (!Validate::isUrl(Tools::getValue('link_'.$language['id_lang']))) {
-                    $this->errors[] = $this->l('Name is not valid');
-                } else {
+
+                $everpopup->name[$language['id_lang']] = Tools::getValue('name_'.$language['id_lang']);
+                $everpopup->content[$language['id_lang']] = Tools::getValue('content_'.$language['id_lang']);
+                if (Tools::getIsset('link_'.(int)$language['id_lang'])) {
                     $everpopup->link[$language['id_lang']] = Tools::getValue('link_'.$language['id_lang']);
                 }
             }
-            if (!count($this->errors)) {
-                if ($this->isSeven) {
+
+
+            if ($this->isSeven) {
+                $saved = $everpopup->save();
+            } else {
+                if (!Tools::getValue('id_everpspopup')) {
                     $saved = $everpopup->save();
                 } else {
-                    if (!Tools::getValue('id_everpspopup')) {
-                        $saved = $everpopup->save();
-                    } else {
-                        // Quick fix for fuckin' PS 1.6 not updating object
-                        $saved = true;
+                    // Quick fix for fuckin' PS 1.6 not updating object
+                    $saved = true;
+                    $saved &= Db::getInstance()->update(
+                        $this->table,
+                        array(
+                            'active' => (int)Tools::getValue('active'),
+                            'id_shop' => (int)$this->context->shop->id,
+                            'groups' => json_encode(Tools::getValue('groupBox')),
+                            'newsletter' => (int)Tools::getValue('newsletter'),
+                            'bgcolor' => Tools::getValue('bgcolor'),
+                            'controller_array' => (int)Tools::getValue('controller_array'),
+                            'categories' => json_encode(Tools::getValue('categories')),
+                            'cookie_time' => (int)Tools::getValue('cookie_time'),
+                            'delay' => (int)Tools::getValue('delay'),
+                            'date_start' => Tools::getValue('date_start'),
+                            'date_end' => Tools::getValue('date_end'),
+                            'adult_mode' => (int)Tools::getValue('adult_mode'),
+                            'active' => (int)Tools::getValue('active')
+                        ),
+                        'id_everpspopup = '.(int)Tools::getValue('id_everpspopup')
+                    );
+                    foreach (Language::getLanguages(false) as $language) {
                         $saved &= Db::getInstance()->update(
-                            $this->table,
+                            $this->table.'_lang',
                             array(
-                                'active' => (int)Tools::getValue('active'),
-                                'id_shop' => (int)$this->context->shop->id,
-                                'groups' => json_encode(Tools::getValue('groupBox')),
-                                'newsletter' => (int)Tools::getValue('newsletter'),
-                                'bgcolor' => Tools::getValue('bgcolor'),
-                                'controller_array' => (int)Tools::getValue('controller_array'),
-                                'categories' => json_encode(Tools::getValue('categories')),
-                                'cookie_time' => (int)Tools::getValue('cookie_time'),
-                                'delay' => (int)Tools::getValue('delay'),
-                                'date_start' => Tools::getValue('date_start'),
-                                'date_end' => Tools::getValue('date_end'),
-                                'adult_mode' => (int)Tools::getValue('adult_mode'),
-                                'active' => (int)Tools::getValue('active')
+                                'name' => Tools::getValue('name_'.(int)$language['id_lang']),
+                                'content' => Tools::getValue('content_'.(int)$language['id_lang']),
+                                'link' => Tools::getValue('link_'.(int)$language['id_lang']),
                             ),
-                            'id_everpspopup = '.(int)Tools::getValue('id_everpspopup')
+                            'id_everpspopup = '.(int)Tools::getValue('id_everpspopup').' AND id_lang = '.(int)$language['id_lang']
                         );
-                        foreach (Language::getLanguages(false) as $language) {
-                            $saved &= Db::getInstance()->update(
-                                $this->table.'_lang',
-                                array(
-                                    'name' => Tools::getValue('name_'.(int)$language['id_lang']),
-                                    'content' => Tools::getValue('content_'.(int)$language['id_lang']),
-                                    'link' => Tools::getValue('link_'.(int)$language['id_lang']),
-                                ),
-                                'id_everpspopup = '.(int)Tools::getValue('id_everpspopup').' AND id_lang = '.(int)$language['id_lang']
-                            );
-                        }
                     }
                 }
-                if ((bool)$saved === true) {
-                    $this->success[] = $this->l('Popup has been fully saved');
-                    if (Tools::isSubmit('save_and_stay') === true) {
-                        Tools::redirectAdmin(
-                            self::$currentIndex
-                            .'&update'
-                            .$this->table
-                            .'&'
-                            .$this->identifier
-                            .'='
-                            .(int)$everpopup->id
-                            .'&token='
-                            .$this->token
-                        );
-                    } else {
-                        Tools::redirectAdmin(self::$currentIndex.'&conf=4&token='.$this->token);
-                    }
+            }
+            if ((bool)$saved === true) {
+                $this->success[] = $this->l('Popup has been fully saved');
+                if (Tools::isSubmit('save_and_stay')) {
+                    Tools::redirectAdmin(
+                        self::$currentIndex
+                        .'&update'
+                        .$this->table
+                        .'&'
+                        .$this->identifier
+                        .'='
+                        .(int)$everpopup->id
+                        .'&token='
+                        .$this->token
+                    );
                 } else {
-                    $this->errors[] = $this->l('Can\'t update the current object');
+                    Tools::redirectAdmin(self::$currentIndex.'&conf=4&token='.$this->token);
                 }
+            } else {
+                $this->errors[] = Tools::displayError('Can\'t update the current object');
             }
         }
     }
@@ -731,5 +593,168 @@ class AdminEverPsPopupController extends ModuleAdminController
                 $this->errors[] = $this->l('Objects has been fully enabled');
             }
         }
+    }
+
+    private function validateProcess()
+    {
+        if (Tools::getValue('newsletter')
+            && !Validate::isBool(Tools::getValue('newsletter'))
+        ) {
+             $this->errors[] = $this->l('Newsletter is not valid');
+        }
+        if (Tools::getValue('newsletter')
+            && !$ps_newsletter
+        ) {
+             $this->errors[] = $this->l('Newsletter module is not installed');
+        }
+        if (Tools::getValue('bgcolor')
+            && !Validate::isColor(Tools::getValue('bgcolor'))
+        ) {
+             $this->errors[] = $this->l('Color is not valid');
+        }
+        if (Tools::getValue('controller_array')
+            && !Validate::isUnsignedInt(Tools::getValue('controller_array'))
+        ) {
+             $this->errors[] = $this->l('Controller is not valid');
+        }
+        if (Tools::getValue('categories')
+            && !Validate::isArrayWithIds(Tools::getValue('categories'))
+        ) {
+             $this->errors[] = $this->l('Controller is not valid');
+        }
+
+        if (Tools::getValue('carrier')
+            && !Validate::isUnsignedInt(Tools::getValue('carrier'))
+        ) {
+            $this->errors[] = $this->l('Carrier is not valid');
+        }
+        if (Tools::getValue('cookie_time')
+            && !Validate::isUnsignedInt(Tools::getValue('cookie_time'))
+        ) {
+            $this->errors[] = $this->l('Cookie time is not valid');
+        }
+        if (Tools::getValue('adult_mode')
+            && !Validate::isBool(Tools::getValue('adult_mode'))
+        ) {
+            $this->errors[] = $this->l('Adult mode is not valid');
+        }
+        if (Tools::getValue('delay')
+            && !Validate::isUnsignedInt(Tools::getValue('delay'))
+        ) {
+            $this->errors[] = $this->l('Delay is not valid');
+        }
+        if (Tools::getValue('date_start')
+            && !Validate::isDateFormat(Tools::getValue('date_start'))
+        ) {
+            $this->errors[] = $this->l('Date start is not valid');
+        }
+        if (Tools::getValue('date_end')
+            && !Validate::isDateFormat(Tools::getValue('date_end'))
+        ) {
+            $this->errors[] = $this->l('Date end is not valid');
+        }
+        if (Tools::getValue('active')
+            && !Validate::isBool(Tools::getValue('active'))
+        ) {
+            $this->errors[] = $this->l('Active is not valid');
+        }
+
+        foreach (Language::getLanguages(false) as $language) {
+            if (!Validate::isGenericName(Tools::getValue('name_'.$language['id_lang']))) {
+                $this->errors[] = $this->l('Name is not valid');
+            }
+            if (!Validate::isCleanHtml(Tools::getValue('content_'.$language['id_lang']))) {
+                $this->errors[] = $this->l('Content is not valid');
+            }
+            if (Tools::getIsset('link_'.$language['id_lang']) && Tools::getValue('link_'.$language['id_lang'])) {
+                if (!Validate::isUrl(Tools::getValue('link_'.$language['id_lang']))) {
+                    $this->errors[] = $this->l('url is not valid');
+                }
+            }
+        }
+    }
+
+    protected function getConditionList()
+    {
+        return array(
+            array(
+                'id_option' => 1,
+                'name' => $this->l('CMS only')
+            ),
+            array(
+                'id_option' => 2,
+                'name' => $this->l('Products only')
+            ),
+            array(
+                'id_option' => 3,
+                'name' => $this->l('Categories only')
+            ),
+            array(
+                'id_option' => 4,
+                'name' => $this->l('Home only')
+            ),
+            array(
+                'id_option' => 5,
+                'name' => $this->l('Cart & order pages only')
+            ),
+            array(
+                'id_option' => 6,
+                'name' => $this->l('All')
+            ),
+        );
+    }
+
+    protected function getCookieList()
+    {
+        return array(
+            array(
+              'id_option' => 1,
+              'name' => $this->l('1 day')
+            ),
+            array(
+              'id_option' => 2,
+              'name' => $this->l('2 days')
+            ),
+            array(
+              'id_option' => 3,
+              'name' => $this->l('3 days')
+            ),
+            array(
+              'id_option' => 4,
+              'name' => $this->l('4 days')
+            ),
+            array(
+              'id_option' => 5,
+              'name' => $this->l('5 days')
+            ),
+            array(
+              'id_option' => 7,
+              'name' => $this->l('7 days')
+            ),
+            array(
+              'id_option' => 10,
+              'name' => $this->l('10 days')
+            ),
+            array(
+              'id_option' => 15,
+              'name' => $this->l('15 days')
+            ),
+            array(
+              'id_option' => 20,
+              'name' => $this->l('20 days')
+            ),
+            array(
+              'id_option' => 30,
+              'name' => $this->l('30 days')
+            ),
+            array(
+              'id_option' => 60,
+              'name' => $this->l('60 days')
+            ),
+            array(
+              'id_option' => 0,
+              'name' => $this->l('Disabled')
+            )
+        );
     }
 }
