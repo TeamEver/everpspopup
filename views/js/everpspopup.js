@@ -17,7 +17,7 @@
  */
 
  $(document).ready(function(){
-    var cookie_time = $('#everpspopup_block_center').data('expire')?$('#everpspopup_block_center').data('expire'):90061; //set cookie on 1day1hour1minute if not set in config
+    var cookie_time = $('#everpspopup_block_center').data('expire')?$('#everpspopup_block_center').data('expire'):0; //set cookie on 1day1hour1minute if not set in config
     var adult_mode = $('#everpspopup_block_center').data('adult');
     var delay = parseInt($('#everpspopup_block_center').data('delay'));
     var cookie_suffix = $('#everpspopup_block_center').data('cookiesuffix');
