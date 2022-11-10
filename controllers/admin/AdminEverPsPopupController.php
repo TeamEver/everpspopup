@@ -432,7 +432,6 @@ class AdminEverPsPopupController extends ModuleAdminController
             $ps_newsletter = Module::isInstalled('blocknewsletter');
         }
 
-
         if (Tools::isSubmit('save') || Tools::isSubmit('save_and_stay')) {
             $this->validateProcess();
 
@@ -597,6 +596,11 @@ class AdminEverPsPopupController extends ModuleAdminController
 
     private function validateProcess()
     {
+        if ($this->isSeven) {
+            $ps_newsletter = Module::isInstalled('ps_emailsubscription');
+        } else {
+            $ps_newsletter = Module::isInstalled('blocknewsletter');
+        }
         if (Tools::getValue('newsletter')
             && !Validate::isBool(Tools::getValue('newsletter'))
         ) {
