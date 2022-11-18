@@ -17,7 +17,11 @@
  */
 /* Webbax - Tuto 36 - Popup */
 /*https://www.webbax.ch/2017/10/02/prestashop-1-7-popup-ep-36/*/
-#everpspopup_block_center{background-size: cover;}
+#everpspopup_block_center{
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+}
 #everpspopup_block_center h1, #everpspopup_block_center h2, #everpspopup_block_center span {
     text-align: center;
 }
@@ -55,4 +59,8 @@ div#everpspopup_block_center img {
 }
 #adult_mode_form .input-group {
     margin: 0 auto;
+}
+.fancybox-container *{
+    margin:0;
+    padding:0;
 }
