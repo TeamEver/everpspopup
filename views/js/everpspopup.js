@@ -178,7 +178,7 @@
         })
     }
     //check if there's atleast 1 pop-up and if carrier is set
-    if ($('#ever_fancy_mark').length>=1 && $('#ever_fancy_mark').data('carrier') != 0) { 
+    if ($('#ever_fancy_mark').length >= 1 || $('#ever_fancy_mark').data('carrier') != 0) { 
         setTimeout(function() {
             if ($.cookie('everpspopup' + cookie_suffix) != popcontent) {
                 if (adult_mode) {

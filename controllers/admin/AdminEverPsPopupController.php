@@ -541,7 +541,7 @@ class AdminEverPsPopupController extends ModuleAdminController
                         .$this->token
                     );
                 } else {
-                    Tools::redirectAdmin(self::$currentIndex.'&conf=4&token='.$this->token);
+                    Tools::redirectAdmin(self::$currentIndex.'&token='.$this->token);
                 }
             } else {
                 $this->errors[] = Tools::displayError('Can\'t update the current object');
