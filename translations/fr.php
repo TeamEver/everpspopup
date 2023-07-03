@@ -1,7 +1,7 @@
 <?php
 
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{everpspopup}prestashop>everpspopup_4dc802f9a0a830d3cdac0bbe05073760'] = 'Ever Popup';
 $_MODULE['<{everpspopup}prestashop>everpspopup_d2650f8837b5d548d208eae2721141c3'] = 'Sans doute le module de popup le plus populaire de Prestashop';
 $_MODULE['<{everpspopup}prestashop>everpspopup_f4f70727dc34561dfde1a3c529b6205c'] = 'Réglages';

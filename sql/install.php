@@ -1,6 +1,6 @@
 <?php
 /**
- * 2019-2022 Team Ever
+ * 2019-2023 Team Ever
  *
  * NOTICE OF LICENSE
  *
@@ -13,12 +13,12 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  *  @author    Team Ever <https://www.team-ever.com/>
- *  @copyright 2019-2022 Team Ever
+ *  @copyright 2019-2023 Team Ever
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 /* Init */
-$sql = array();
+$sql = [];
 
 /* Create Tables in Database */
 $sql[] = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'everpspopup` (

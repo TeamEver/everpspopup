@@ -1,6 +1,6 @@
 <?php
 /**
- * 2019-2022 Team Ever
+ * 2019-2023 Team Ever
  *
  * NOTICE OF LICENSE
  *
@@ -13,7 +13,7 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  *  @author    Team Ever <https://www.team-ever.com/>
- *  @copyright 2019-2022 Team Ever
+ *  @copyright 2019-2023 Team Ever
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -40,7 +40,7 @@ class AdminEverPsPopupController extends ModuleAdminController
         $this->context->smarty->assign(array(
             'everpspopup_dir' => _MODULE_DIR_ . '/everpspopup/'
         ));
-        $this->success = array();
+        $this->success = [];
         $this->fields_list = array(
             'id_everpspopup' => array(
                 'title' => $this->l('ID'),
@@ -90,11 +90,11 @@ class AdminEverPsPopupController extends ModuleAdminController
     public function initPageHeaderToolbar()
     {
         //Bouton d'ajout
-        $this->page_header_toolbar_btn['new'] = array(
+        $this->page_header_toolbar_btn['new'] = [
             'href' => self::$currentIndex . '&add' . $this->table . '&token=' . $this->token,
             'desc' => $this->l('Add new element'),
-            'icon' => 'process-icon-new'
-        );
+            'icon' => 'process-icon-new',
+        ];
         parent::initPageHeaderToolbar();
     }
 
@@ -168,7 +168,7 @@ class AdminEverPsPopupController extends ModuleAdminController
             return false;
         }
         $everpopup = $this->loadObject(true);
-        $selected_cat = array();
+        $selected_cat = [];
 
         // die(var_dump($everpopup));
 
@@ -446,7 +446,7 @@ class AdminEverPsPopupController extends ModuleAdminController
                     (int)Context::getContext()->language->id,
                     (int)$shop['id_shop']
                 );
-                $group_condition = array();
+                $group_condition = [];
                 foreach ($groups as $group) {
                     $group_condition[] = (int)$group['id_group'];
                 }

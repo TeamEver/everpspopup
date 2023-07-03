@@ -1,6 +1,6 @@
 <?php
 /**
- * 2019-2022 Team Ever
+ * 2019-2023 Team Ever
  *
  * NOTICE OF LICENSE
  *
@@ -13,7 +13,7 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  *  @author    Team Ever <https://www.team-ever.com/>
- *  @copyright 2019-2022 Team Ever
+ *  @copyright 2019-2023 Team Ever
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -50,26 +50,26 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
             if (empty($_SERVER['REMOTE_ADDR'])
                 || !filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP)
             ) {
-                die(json_encode(array(
+                die(json_encode([
                     'return' => false,
-                    'error' => $module->l('User ip not found or not valid', 'everpspopup')
-                )));
+                    'error' => $module->l('User ip not found or not valid', 'everpspopup'),
+                ]));
             }
 
             if (!Tools::getValue('everpspopupEmail')
                 || !Validate::isEmail(Tools::getValue('everpspopupEmail'))
             ) {
-                die(json_encode(array(
+                die(json_encode([
                     'return' => false,
-                    'error' => $module->l('Mail address is empty or is not valid.', 'everpspopup')
-                )));
+                    'error' => $module->l('Mail address is empty or is not valid.', 'everpspopup'),
+                ]));
             }
 
             if (!Tools::getValue('everpspopupGdpr')) {
-                die(json_encode(array(
+                die(json_encode([
                     'return' => false,
-                    'error' => $module->l('GDPR consent.', 'everpspopup')
-                )));
+                    'error' => $module->l('GDPR consent.', 'everpspopup'),
+                ]));
             }
 
             // Get needed vars
@@ -93,19 +93,19 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
 
             if ($subscribed) {
                 // if user already subscribe, make sure active is true
-                $sql = "UPDATE "._DB_PREFIX_."$table_newsletter_name SET active = 1 WHERE email = '{$user_email}'";
+                $sql = "UPDATE " . _DB_PREFIX_ . "$table_newsletter_name SET active = 1 WHERE email = '{$user_email}'";
                 $activate = Db::getInstance()->execute($sql);
                 if (!$activate) {
-                    die(json_encode(array(
+                    die(json_encode([
                         'return' => false,
-                        'error' => $module->l('Error : Can\'t update the newsletter subscription', 'ajaxNewSubscribe')
-                    )));
+                        'error' => $module->l('Error : Can\'t update the newsletter subscription', 'ajaxNewSubscribe'),
+                    ]));
                 }
 
-                die(json_encode(array(
+                die(json_encode([
                     'return' => true,
-                    'message' => $module->l('You\'ve already registered to our mailing list', 'ajaxNewSubscribe')
-                )));
+                    'message' => $module->l('You\'ve already registered to our mailing list', 'ajaxNewSubscribe'),
+                ]));
             }
             if ($this->isSeven) {
                 Hook::exec(
@@ -122,20 +122,21 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
             // Add new email address to newsletter table
             $newSubscription = Db::getInstance()->insert(
                 $table_newsletter_name,
-                array(
+                [
                     'id_shop' => (int)Context::getContext()->shop->id,
                     'id_shop_group' => (int)$id_group_shop ,
                     'email' => pSQL($user_email),
                     'newsletter_date_add' => (new DateTime)->format('Y-m-d H:i:s'),
                     'ip_registration_newsletter' => pSQL($user_ip),
                     'active' => 1,
-                )
+                ]
             );
 
             if ($newSubscription) {
                 if ($this->isSeven && Configuration::get('NW_CONFIRMATION_EMAIL')) {
                     $this->sendConfirmationEmail($user_email);
-                    if ($code = Configuration::get('NW_VOUCHER_CODE')) {// send voucher
+                    // send voucher
+                    if ($code = Configuration::get('NW_VOUCHER_CODE')) {
                         $this->sendVoucher($user_email, $code);
                     }
                     // hook
@@ -149,21 +150,21 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
                         ]
                     );
                 }
-                die(json_encode(array(
+                die(json_encode([
                     'return' => true,
-                    'message' => $module->l('Thank you ! Your e-mail has been successfuly registered.')
-                )));
+                    'message' => $module->l('Thank you ! Your e-mail has been successfuly registered.'),
+                ]));
             }
 
-            die(json_encode(array(
+            die(json_encode([
                 'return' => false,
-                'error' => $module->l('Sorry, something went wrong. Please try again later.')
-            )));
+                'error' => $module->l('Sorry, something went wrong. Please try again later.'),
+            ]));
         } else {
-            die(json_encode(array(
+            die(json_encode([
                 'return' => true,
-                'message' => $module->l('Module Newsletter not activated')
-            )));
+                'message' => $module->l('Module Newsletter not activated'),
+            ]));
         }
     }
 
@@ -183,18 +184,18 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
             'newsletter_conf',
             $this->trans(
                 'Newsletter confirmation',
-                array(),
+                [],
                 'Emails.Subject',
                 $language->locale
             ),
-            array(),
+            [],
             pSQL($email),
             null,
             null,
             null,
             null,
             null,
-            _PS_MODULE_DIR_.'ps_emailsubscription/mails/',
+            _PS_MODULE_DIR_ . 'ps_emailsubscription/mails/',
             false,
             $this->context->shop->id
         );
@@ -217,20 +218,20 @@ class EverpspopupAjaxNewSubscribeModuleFrontController extends ModuleFrontContro
             'newsletter_voucher',
             $this->trans(
                 'Newsletter voucher',
-                array(),
+                [],
                 'Emails.Subject',
                 $language->locale
             ),
-            array(
+            [
                 '{discount}' => $code,
-            ),
+            ],
             $email,
             null,
             null,
             null,
             null,
             null,
-            _PS_MODULE_DIR_.'ps_emailsubscription/mails/',
+            _PS_MODULE_DIR_ . 'ps_emailsubscription/mails/',
             false,
             $this->context->shop->id
         );

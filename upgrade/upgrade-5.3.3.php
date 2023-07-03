@@ -36,7 +36,7 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_5_3_2()
 {
     $result = false;
-    $sql = array();
+    $sql = [];
     $sql[] =
         'ALTER TABLE '._DB_PREFIX_.'everpspopup
          ADD `carrier` int(10) unsigned DEFAULT NULL

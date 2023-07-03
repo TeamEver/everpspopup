@@ -1,6 +1,6 @@
 <?php
 /**
- * 2019-2022 Team Ever
+ * 2019-2023 Team Ever
  *
  * NOTICE OF LICENSE
  *
@@ -13,7 +13,7 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  *  @author    Team Ever <https://www.team-ever.com/>
- *  @copyright 2019-2022 Team Ever
+ *  @copyright 2019-2023 Team Ever
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -26,8 +26,8 @@ require_once _PS_MODULE_DIR_.'everpspopup/models/EverPsPopupClass.php';
 class Everpspopup extends Module
 {
     private $html;
-    private $postErrors = array();
-    private $postSuccess = array();
+    private $postErrors = [];
+    private $postSuccess = [];
     const IMG_FOLDER  = _PS_MODULE_DIR_.'everpspopup/views/img/';
     const POPUP_IMG  = _PS_MODULE_DIR_.'everpspopup/views/img/';
     const POPUP_VIEWS  = _PS_MODULE_DIR_.'everpspopup/views/';
@@ -43,9 +43,9 @@ class Everpspopup extends Module
         parent::__construct();
         $this->displayName = $this->l('Ever Popup');
         $this->description = $this->l('No doubt the most famous pop up module');
-        $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = ['min' => '1.6', 'max' => _PS_VERSION_];
         $this->isSeven = Tools::version_compare(_PS_VERSION_, '1.7', '>=') ? true : false;
-        $this->siteUrl = Tools::getHttpHost(true).__PS_BASE_URI__;
+        $this->siteUrl = Tools::getHttpHost(true) . __PS_BASE_URI__;
         $this->cookie_suffix = Tools::substr(Tools::encrypt('everpspopup/cookie'), 0, 10);
     }
 
@@ -55,7 +55,7 @@ class Everpspopup extends Module
      */
     public function install()
     {
-        include(dirname(__FILE__).'/sql/install.php');
+        include(dirname(__FILE__) . '/sql/install.php');
         if ($this->isSeven) {
             Configuration::updateValue('EVERPSPOPUP_FANCYBOX', true);
         } else {
@@ -103,7 +103,7 @@ class Everpspopup extends Module
             $tab->id_parent = (int)Tab::getIdFromClassName('AdminPreferences');
         }
         foreach (Language::getLanguages(false) as $lang) {
-            $tab->name[(int)$lang['id_lang']] = $tabName;
+            $tab->name[(int) $lang['id_lang']] = $tabName;
         }
         $tab->position = Tab::getNewLastPosition($tab->id_parent);
         return $tab->save();
@@ -154,18 +154,18 @@ class Everpspopup extends Module
         $popup_admin_link  = 'index.php?controller=AdminEverPsPopup&token=';
         $popup_admin_link .= Tools::getAdminTokenLite('AdminEverPsPopup');
 
-        $this->context->smarty->assign(array(
+        $this->context->smarty->assign([
             'everpspopup_dir' => $this->_path,
             'popup_admin_link' => $popup_admin_link,
-        ));
+        ]);
 
-        $this->html .= $this->context->smarty->fetch($this->local_path.'views/templates/admin/header.tpl');
+        $this->html .= $this->context->smarty->fetch($this->local_path . 'views/templates/admin/header.tpl');
         if ($this->checkLatestEverModuleVersion($this->name, $this->version)) {
-            $this->html .= $this->context->smarty->fetch($this->local_path.'views/templates/admin/upgrade.tpl');
+            $this->html .= $this->context->smarty->fetch($this->local_path . 'views/templates/admin/upgrade.tpl');
         }
         $this->html .= $this->renderForm();
-        $this->html .= $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
-        $this->html .= $this->context->smarty->fetch($this->local_path.'views/templates/admin/footer.tpl');
+        $this->html .= $this->context->smarty->fetch($this->local_path . 'views/templates/admin/configure.tpl');
+        $this->html .= $this->context->smarty->fetch($this->local_path . 'views/templates/admin/footer.tpl');
 
         return $this->html;
     }
@@ -185,17 +185,16 @@ class Everpspopup extends Module
 
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'submitEverpspopupModule';
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
-            .'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) .'&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
 
-        $helper->tpl_vars = array(
-            'fields_value' => $this->getConfigFormValues(), /* Add values for your inputs */
+        $helper->tpl_vars = [
+            'fields_value' => $this->getConfigFormValues(),
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id,
-        );
+        ];
 
-        return $helper->generateForm(array($this->getConfigForm()));
+        return $helper->generateForm([$this->getConfigForm()]);
     }
 
     /**
@@ -228,12 +227,12 @@ class Everpspopup extends Module
                             array(
                                 'id' => 'active_on',
                                 'value' => 1,
-                                'label' => $this->l('Enabled')
+                                'label' => $this->l('Enabled'),
                             ),
                             array(
                                 'id' => 'active_off',
                                 'value' => 0,
-                                'label' => $this->l('Disabled')
+                                'label' => $this->l('Disabled'),
                             )
                         ),
                     ),
@@ -247,12 +246,12 @@ class Everpspopup extends Module
                             array(
                                 'id' => 'active_on',
                                 'value' => 1,
-                                'label' => $this->l('Enabled')
+                                'label' => $this->l('Enabled'),
                             ),
                             array(
                                 'id' => 'active_off',
                                 'value' => 0,
-                                'label' => $this->l('Disabled')
+                                'label' => $this->l('Disabled'),
                             )
                         ),
                     ),
@@ -269,11 +268,11 @@ class Everpspopup extends Module
      */
     protected function getConfigFormValues()
     {
-        return array(
+        return [
             'EVERPSPOPUP_AGE' => Configuration::get('EVERPSPOPUP_AGE'),
             'EVERPSPOPUP_FANCYBOX' => Configuration::get('EVERPSPOPUP_FANCYBOX'),
             'EVERPSPOPUP_ASK_AGE' => Configuration::get('EVERPSPOPUP_ASK_AGE'),
-        );
+        ];
     }
 
     public function postValidation()
@@ -319,14 +318,14 @@ class Everpspopup extends Module
     public function hookHeader()
     {
         $controller_name = Tools::getValue('controller');
-        if ((bool)Configuration::get('EVERPSPOPUP_FANCYBOX') === true) {
+        if ((bool) Configuration::get('EVERPSPOPUP_FANCYBOX') === true) {
             if ($controller_name != 'order') {
-                $this->context->controller->addCSS($this->_path.'views/css/jquery.fancybox.min.css', 'all');
-                $this->context->controller->addJS($this->_path.'views/js/jquery.fancybox.min.js', 'all');
+                $this->context->controller->addCSS($this->_path . 'views/css/jquery.fancybox.min.css', 'all');
+                $this->context->controller->addJS($this->_path . 'views/js/jquery.fancybox.min.js', 'all');
             }
         }
-        $this->context->controller->addCSS(($this->_path).'views/css/everpspopup.css', 'all');
-        $this->context->controller->addJS(($this->_path).'views/js/everpspopup.js', 'all');
+        $this->context->controller->addCSS($this->_path . 'views/css/everpspopup.css', 'all');
+        $this->context->controller->addJS($this->_path . 'views/js/everpspopup.js', 'all');
     }
 
     public function hookDisplayAmpContent()
@@ -344,11 +343,10 @@ class Everpspopup extends Module
     */
     public function hookDisplayBeforeBodyClosingTag()
     {
-        $this->_clearCache('everpspopup.tpl');
         $controller_name = Tools::getValue('controller');
         $everpopup = EverPsPopupClass::getPopupByIdController(
-            (int)$this->context->shop->id,
-            (int)$this->context->language->id,
+            (int) $this->context->shop->id,
+            (int) $this->context->language->id,
             $controller_name
         );
         if (!Validate::isLoadedObject($everpopup)) {
@@ -361,17 +359,17 @@ class Everpspopup extends Module
             );
             if (!in_array((int)Tools::getValue('id_category'), $allowed_cats)) {
                 $this->smarty->assign(
-                    array(
+                    [
                         'ever_errors' => 'category not allowed',
-                    )
+                    ]
                 );
                 return $this->display(__FILE__, 'errors.tpl', $this->getCacheId());
             }
         }
-        if ((bool)$this->context->customer->isLogged() === true) {
+        if ((bool) $this->context->customer->isLogged() === true) {
             $content = $this->changeShortcodes(
                 $everpopup->content,
-                (int)$this->context->customer->id
+                (int) $this->context->customer->id
             );
         } else {
             $content = $this->changeShortcodes(
@@ -380,28 +378,28 @@ class Everpspopup extends Module
             );
         }
         // Popup background
-        if (file_exists(_PS_MODULE_DIR_.'everpspopup/views/img/everpopup_'.(int)$everpopup->id.'.jpg')) {
+        if (file_exists(_PS_MODULE_DIR_.'everpspopup/views/img/everpopup_' . (int) $everpopup->id . '.jpg')) {
             $background = _PS_BASE_URL_
-            .__PS_BASE_URI__
-            .'modules/everpspopup/views/img/everpopup_'
-            .(int)$everpopup->id
-            .'.jpg';
+            . __PS_BASE_URI__
+            . 'modules/everpspopup/views/img/everpopup_'
+            . (int) $everpopup->id
+            . '.jpg';
         } else {
             $background = false;
         }
-        $date = strtotime('Y-m-d H:i:s -'.(int)Configuration::get('EVERPSPOPUP_AGE').' year');
+        $date = strtotime('Y-m-d H:i:s -' . (int) Configuration::get('EVERPSPOPUP_AGE').' year');
         $date = date('Y-m-d H:i:s', $date);
         $everpopup->cookie_suffix = $this->cookie_suffix;
         $this->smarty->assign(
-            array(
+            [
                 'controller_name' => $controller_name,
                 'everpspopup' => $everpopup,
                 'content' => $content,
                 'id_lang' => $this->context->language->id,
                 'background' => $background,
-                'ever_ask_age' => (bool)Configuration::get('EVERPSPOPUP_ASK_AGE'),
-                'ever_required_age' => $date
-            )
+                'ever_ask_age' => (bool) Configuration::get('EVERPSPOPUP_ASK_AGE'),
+                'ever_required_age' => $date,
+            ]
         );
         return $this->display(__FILE__, 'everpspopup.tpl', $this->getCacheId());
     }
@@ -411,9 +409,9 @@ class Everpspopup extends Module
         $link = new Link();
         $contactLink = $link->getPageLink('contact');
         if ($id_entity) {
-            $entity = new Customer((int)$id_entity);
-            $gender = new Gender((int)$entity->id_gender, (int)$entity->id_lang);
-            $entityShortcodes = array(
+            $entity = new Customer((int) $id_entity);
+            $gender = new Gender((int) $entity->id_gender, (int) $entity->id_lang);
+            $entityShortcodes = [
                 '[entity_lastname]' => $entity->lastname,
                 '[entity_firstname]' => $entity->firstname,
                 '[entity_company]' => $entity->company,
@@ -422,9 +420,9 @@ class Everpspopup extends Module
                 '[entity_birthday]' => $entity->birthday,
                 '[entity_website]' => $entity->website,
                 '[entity_gender]' => $gender->name,
-            );
+            ];
         } else {
-            $entityShortcodes = array(
+            $entityShortcodes = [
                 '[entity_lastname]' => '',
                 '[entity_firstname]' => '',
                 '[entity_company]' => '',
@@ -433,25 +431,25 @@ class Everpspopup extends Module
                 '[entity_birthday]' => '',
                 '[entity_website]' => '',
                 '[entity_gender]' => '',
-            );
+            ];
         }
-        $defaultShortcodes = array(
+        $defaultShortcodes = [
             '[shop_url]' => Tools::getShopDomainSsl(true),
-            '[shop_name]'=> (string)Configuration::get('PS_SHOP_NAME'),
+            '[shop_name]'=> Configuration::get('PS_SHOP_NAME'),
             '[start_cart_link]' => '<a href="'
-            .Tools::getShopDomainSsl(true)
-            .'/index.php?controller=cart&action=show" rel="nofollow" target="_blank">',
+            . Tools::getShopDomainSsl(true)
+            . '/index.php?controller=cart&action=show" rel="nofollow" target="_blank">',
             '[end_cart_link]' => '</a>',
             '[start_shop_link]' => '<a href="'
-            .Tools::getShopDomainSsl(true)
-            .'" target="_blank">',
+            . Tools::getShopDomainSsl(true)
+            . '" target="_blank">',
             '[start_contact_link]' => '<a href="'.$contactLink.'" rel="nofollow" target="_blank">',
             '[end_shop_link]' => '</a>',
             '[end_contact_link]' => '</a>',
             'NULL' => '', // Useful : remove empty strings in case of NULL
             'null' => '', // Useful : remove empty strings in case of null
             'false' => '', // Useful : remove empty strings in case of false
-        );
+        ];
         $shortcodes = array_merge($entityShortcodes, $defaultShortcodes);
         foreach ($shortcodes as $key => $value) {
             $message = str_replace($key, $value, $message);
@@ -464,23 +462,23 @@ class Everpspopup extends Module
         $shops = Shop::getShops();
         foreach ($shops as $shop) {
             $groups = Group::getGroups(
-                (int)Context::getContext()->language->id,
-                (int)$shop['id_shop']
+                (int) Context::getContext()->language->id,
+                (int) $shop['id_shop']
             );
-            $group_condition = array();
+            $group_condition = [];
             foreach ($groups as $group) {
-                $group_condition[] = (int)$group['id_group'];
+                $group_condition[] = (int) $group['id_group'];
             }
             $categories = Category::getSimpleCategories(
-                (int)Context::getContext()->language->id
+                (int) Context::getContext()->language->id
             );
-            $category_condition = array();
+            $category_condition = [];
             foreach ($categories as $category) {
-                $category_condition[] = (int)$category['id_category'];
+                $category_condition[] = (int) $category['id_category'];
             }
             // Create and save demo popup
             $popup = new EverPsPopupClass();
-            $popup->id_shop = (int)$shop['id_shop'];
+            $popup->id_shop = (int) $shop['id_shop'];
             $popup->groups = json_encode($group_condition);
             $popup->controller_array = 6;
             $popup->categories = json_encode($category_condition);
@@ -509,20 +507,24 @@ class Everpspopup extends Module
         .$module
         .'&version='
         .$version;
-        $handle = curl_init($upgrade_link);
-        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-        curl_exec($handle);
-        $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
-        curl_close($handle);
-        if ($httpCode != 200) {
+        try {
+            $handle = curl_init($upgrade_link);
+            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+            curl_exec($handle);
+            $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+            curl_close($handle);
+            if ($httpCode != 200) {
+                return false;
+            }
+            $module_version = Tools::file_get_contents(
+                $upgrade_link
+            );
+            if ($module_version && $module_version > $version) {
+                return true;
+            }
             return false;
+        } catch (Exception $e) {
+            PrestaShopLogger::addLog('Unable to check Team Ever latest module version');
         }
-        $module_version = Tools::file_get_contents(
-            $upgrade_link
-        );
-        if ($module_version && $module_version > $version) {
-            return true;
-        }
-        return false;
     }
 }

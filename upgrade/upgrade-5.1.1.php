@@ -36,7 +36,7 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_5_1_1()
 {
     $result = false;
-    $sql = array();
+    $sql = [];
     $sql[] =
         'ALTER TABLE '._DB_PREFIX_.'everpspopup
          MODIFY COLUMN `categories` text DEFAULT NULL;

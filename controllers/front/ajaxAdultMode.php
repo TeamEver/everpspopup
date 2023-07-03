@@ -1,6 +1,6 @@
 <?php
 /**
- * 2019-2022 Team Ever
+ * 2019-2023 Team Ever
  *
  * NOTICE OF LICENSE
  *
@@ -13,7 +13,7 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  *  @author    Team Ever <https://www.team-ever.com/>
- *  @copyright 2019-2022 Team Ever
+ *  @copyright 2019-2023 Team Ever
  *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
@@ -36,36 +36,36 @@ class EverpspopupAjaxAdultModeModuleFrontController extends ModuleFrontControlle
     public function displayAjaxCheckAge()
     {
         if (empty(Tools::getValue('ever_birthday')) || !Validate::isDate(Tools::getValue('ever_birthday'))) {
-            die(Tools::jsonEncode(array(
+            die(json_encode([
                 'return' => false,
-                'error' => $this->module->l('Birth ever_birthday is empty or is not valid.')
-            )));
+                'error' => $this->module->l('Birth ever_birthday is empty or is not valid.'),
+            ]));
         }
 
         $from = new DateTime(Tools::getValue('ever_birthday'));
-        $to   = new DateTime('today');
+        $to = new DateTime('today');
         $age = $from->diff($to)->y;
-        if ((bool)Configuration::get('EVERPSPOPUP_ASK_AGE') === false) {
-            die(Tools::jsonEncode(array(
+        if ((bool) Configuration::get('EVERPSPOPUP_ASK_AGE') === false) {
+            die(json_encode([
                 'return' => true,
-                'message' => $this->module->l('Vous êtes autorisé à visualiser le contenu')
-            )));
+                'message' => $this->module->l('Vous êtes autorisé à visualiser le contenu'),
+            ]));
         }
         if ($age >= (int)Configuration::get('EVERPSPOPUP_AGE')) {
-            die(Tools::jsonEncode(array(
+            die(json_encode([
                 'return' => true,
-                'message' => $this->module->l('Vous êtes autorisé à visualiser le contenu')
-            )));
+                'message' => $this->module->l('Vous êtes autorisé à visualiser le contenu'),
+            ]));
         } else {
-            die(Tools::jsonEncode(array(
+            die(json_encode([
                 'return' => false,
-                'error' => $this->module->l('Vous n\'êtes pas autorisé à visualiser le contenu')
-            )));
+                'error' => $this->module->l('Vous n\'êtes pas autorisé à visualiser le contenu'),
+            ]));
         }
 
-        die(Tools::jsonEncode(array(
+        die(json_encode([
             'return' => false,
-            'error' => $this->module->l('Sorry, something went wrong. Please try again later')
-        )));
+            'error' => $this->module->l('Sorry, something went wrong. Please try again later'),
+        ]));
     }
 }
